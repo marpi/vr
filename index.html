@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Munchery</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
+            body {
+                margin: 0px;
+                background-color: #000;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+
+        <script src="js/third-party/threejs/three.min.js"></script>
+        <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
+        <script src="js/third-party/threejs/OrbitControls.js"></script>
+        <script src="js/third-party/threejs/StereoEffect.js"></script>
+
+        <script src="js/loaders/ColladaLoader.js"></script>
+        <script src="js/loaders/OBJLoader.js"></script>
+        <script src="js/TweenMax.min.js"></script>
+
+        <script src="js/Cardboard.js"></script>
+        <script src="js/DetectScreenSize.js"></script>
+        <script src="js/scene.js"></script>
+
+        <script>
+            (function () {
+                var MOBILE_SITE = 'no_device.html'
+                if (!isMobile.any) {
+                    document.location = MOBILE_SITE;
+                }
+            })();
+        </script>
+
+        <script>
+
+            function Project() {
+
+                THREE.Object3D.call(this);
+
+                // Camera Rig
+
+                this.cameraRig = new THREE.Object3D();
+                this.cameraRig.add(cardboard.camera);
+                cardboard.scene.add(this.cameraRig);
+
+                createScene(cardboard.scene, cardboard.renderer)
+
+                var ambientLight = new THREE.AmbientLight(0x0);
+                //this.cameraRig.add(ambientLight);
+
+                cardboard.camera.position.z = 2.0;
+
+                cardboard.controls.object = this.cameraRig;
+                cardboard.controls.object.rotation.reorder('YXZ');
+            }
+
+            var scope = this;
+            var cardboard, project;
+
+            window.addEventListener('load', function () {
+                cardboard = new Cardboard();
+                project = new Project();
+
+                cardboard.effect.separation = 0.06;
+
+                cardboard.update = function () {
+
+                    Cardboard.prototype.update.call(this);
+                    updateScene(cardboard.effect.camera)
+
+                };
+
+                document.body.appendChild(cardboard.renderer.domElement);
+            });
+        </script>
+        <script>
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+            ga('create', 'UA-66070220-1', 'auto');
+            ga('send', 'pageview');
+
+        </script>
+    </body>
+</html>
