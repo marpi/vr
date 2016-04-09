@@ -18,17 +18,10 @@
         <script src="js/isMobile.min.js"></script>
 
         <script>
-            (function () {
-                var MOBILE_SITE = 'no_device.html'
-                if (!isMobile.any) {
-                    document.location = MOBILE_SITE;
-                }
-            })();
-        </script>
-        <script>
 
             var camera, scene, renderer;
             var effect;
+            var mobile = isMobile.any;
 
             init();
             animate();
@@ -43,7 +36,7 @@
                 camera.lookAt(scene.position);
 
                 var geometry = new THREE.TorusKnotGeometry(0.4, 0.15, 150, 20);
-                ;
+
                 var material = new THREE.MeshStandardMaterial({roughness: 0.01, metalness: 0.2});
                 var mesh = new THREE.Mesh(geometry, material);
                 mesh.position.y = 0.75;
@@ -80,32 +73,32 @@
                 renderer.shadowMap.enabled = true;
                 document.body.appendChild(renderer.domElement);
 
-                renderer.domElement.addEventListener('click', function () {
+                if (mobile) {
+                    renderer.domElement.addEventListener('click', function () {
 
-                    if (this.requestFullscreen) {
+                        if (this.requestFullscreen) {
 
-                        this.requestFullscreen();
+                            this.requestFullscreen();
 
-                    } else if (this.msRequestFullscreen) {
+                        } else if (this.msRequestFullscreen) {
 
-                        this.msRequestFullscreen();
+                            this.msRequestFullscreen();
 
-                    } else if (this.mozRequestFullScreen) {
+                        } else if (this.mozRequestFullScreen) {
 
-                        this.mozRequestFullScreen();
+                            this.mozRequestFullScreen();
 
-                    } else if (this.webkitRequestFullscreen) {
+                        } else if (this.webkitRequestFullscreen) {
 
-                        this.webkitRequestFullscreen();
+                            this.webkitRequestFullscreen();
 
-                    }
+                        }
 
-                });
+                    });
 
-                //
-
-                effect = new THREE.CardboardEffect(renderer);
-                effect.setSize(window.innerWidth, window.innerHeight);
+                    effect = new THREE.CardboardEffect(renderer);
+                    effect.setSize(window.innerWidth, window.innerHeight);
+                }
 
                 //
 
@@ -140,7 +133,11 @@
                 mesh.rotation.x = time * 2;
                 mesh.rotation.y = time * 5;
 
-                effect.render(scene, camera);
+                if (mobile) {
+                    effect.render(scene, camera);
+                } else {
+                    renderer.render(scene, camera);
+                }
 
             }
 
