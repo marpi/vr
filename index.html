@@ -15,13 +15,14 @@
 
         <script src="js/three.min.js"></script>
         <script src="js/effects/CardboardEffect.js"></script>
-        <script src="js/isMobile.min.js"></script>
+        <script src="js/controls/DeviceOrientationControls.js"></script>
+        <script src="js/controls/OrbitControls.js"></script>
 
         <script>
 
             var camera, scene, renderer;
             var effect;
-            var mobile = isMobile.any;
+            var mobile = false;
 
             init();
             animate();
@@ -73,7 +74,22 @@
                 renderer.shadowMap.enabled = true;
                 document.body.appendChild(renderer.domElement);
 
-                if (mobile) {
+                controls = new THREE.OrbitControls(camera);
+                controls.noPan = true;
+                controls.noZoom = true;
+
+                // Our preferred controls via DeviceOrientation
+                function setOrientationControls(e) {
+                    if (!e.alpha) {
+                        return;
+                    }
+
+                    controls = new THREE.DeviceOrientationControls(camera, true);
+                    controls.connect();
+                    controls.update();
+
+                    window.removeEventListener('deviceorientation', setOrientationControls, true);
+
                     renderer.domElement.addEventListener('click', function () {
 
                         if (this.requestFullscreen) {
@@ -98,7 +114,10 @@
 
                     effect = new THREE.CardboardEffect(renderer);
                     effect.setSize(window.innerWidth, window.innerHeight);
+                    
+                    mobile=true;
                 }
+                window.addEventListener('deviceorientation', setOrientationControls, true);
 
                 //
 
@@ -125,9 +144,8 @@
             function render() {
 
                 var time = performance.now() * 0.0002;
-                camera.position.x = Math.cos(time) * 4;
-                camera.position.z = Math.sin(time) * 4;
-                camera.lookAt(new THREE.Vector3());
+                
+                controls.update();
 
                 var mesh = scene.children[ 0 ];
                 mesh.rotation.x = time * 2;
