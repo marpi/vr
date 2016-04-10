@@ -36,9 +36,9 @@
                 camera.focalLength = camera.position.distanceTo(scene.position);
                 camera.lookAt(scene.position);
 
-                var geometry = new THREE.TorusKnotGeometry(0.4, 0.15, 150, 20);
+                var geometry = new THREE.TorusKnotGeometry(0.64, 0.15, 150, 20);
 
-                var material = new THREE.MeshStandardMaterial({roughness: 0.01, metalness: 0.2});
+                var material = new THREE.MeshPhongMaterial({roughness: 0.01, metalness: 0.2});
                 var mesh = new THREE.Mesh(geometry, material);
                 scene.add(mesh);
 
@@ -127,9 +127,9 @@
 
                 controls.update();
 
-                var mesh = scene.children[ 0 ];
-                mesh.rotation.x = time * 2;
-                mesh.rotation.y = time * 5;
+                //var mesh = scene.children[ 0 ];
+                //mesh.rotation.x = time * 2;
+                //mesh.rotation.y = time * 5;
 
                 if (mobile) {
                     camera.position.set(0, 0, 0)
