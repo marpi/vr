@@ -75,8 +75,8 @@
                 document.body.appendChild(renderer.domElement);
 
                 controls = new THREE.OrbitControls(camera);
-                controls.noPan = true;
-                controls.noZoom = true;
+                controls.enablePan = false;
+                controls.enableZoom = false;
 
                 // Our preferred controls via DeviceOrientation
                 function setOrientationControls(e) {
@@ -93,29 +93,21 @@
                     renderer.domElement.addEventListener('click', function () {
 
                         if (this.requestFullscreen) {
-
                             this.requestFullscreen();
-
                         } else if (this.msRequestFullscreen) {
-
                             this.msRequestFullscreen();
-
                         } else if (this.mozRequestFullScreen) {
-
                             this.mozRequestFullScreen();
-
                         } else if (this.webkitRequestFullscreen) {
-
                             this.webkitRequestFullscreen();
-
                         }
 
                     });
 
                     effect = new THREE.CardboardEffect(renderer);
                     effect.setSize(window.innerWidth, window.innerHeight);
-                    
-                    mobile=true;
+
+                    mobile = true;
                 }
                 window.addEventListener('deviceorientation', setOrientationControls, true);
 
@@ -144,7 +136,7 @@
             function render() {
 
                 var time = performance.now() * 0.0002;
-                
+
                 controls.update();
 
                 var mesh = scene.children[ 0 ];
@@ -152,6 +144,8 @@
                 mesh.rotation.y = time * 5;
 
                 if (mobile) {
+                    camera.position.set(0, 0, 0)
+                    camera.translateZ(5);
                     effect.render(scene, camera);
                 } else {
                     renderer.render(scene, camera);
