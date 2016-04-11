@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>three.js webgl - effects - cardboard</title>
+        <title>vr</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
         <style>
@@ -41,6 +41,17 @@
                 var material = new THREE.MeshPhongMaterial({roughness: 0.01, metalness: 0.2});
                 var mesh = new THREE.Mesh(geometry, material);
                 scene.add(mesh);
+
+                for (var _x = -3; _x <= 3; _x++) {
+                    for (var _y = -3; _y <= 3; _y++) {
+                        for (var _z = -3; _z <= 3; _z++) {
+                            var geo = new THREE.BoxGeometry(.1, .1,.1, 1, 1, 1)
+                            var mesh = new THREE.Mesh(geo, material)
+                            mesh.position.set(_x, _y, _z)
+                            scene.add(mesh);
+                        }
+                    }
+                }
 
                 var light = new THREE.DirectionalLight(0x8800ff);
                 light.position.set(-1, 1.5, 0.5);
