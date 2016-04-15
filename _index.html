@@ -13,10 +13,10 @@
     </head>
     <body>
 
-        <script src="js/third-party/threejs/three.js"></script>
-        <script src="js/third-party/threejs/controls/DeviceOrientationControls.js"></script>
-        <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
-        <script src="js/third-party/threejs/effects/StereoEffect.js"></script>
+        <script src="js/three.min.js"></script>
+        <script src="js/effects/CardboardEffect.js"></script>
+        <script src="js/controls/DeviceOrientationControls.js"></script>
+        <script src="js/controls/OrbitControls.js"></script>
 
         <script>
 
@@ -45,7 +45,7 @@
                 for (var _x = -3; _x <= 3; _x++) {
                     for (var _y = -3; _y <= 3; _y++) {
                         for (var _z = -3; _z <= 3; _z++) {
-                            var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
+                            var geo = new THREE.BoxGeometry(.1, .1,.1, 1, 1, 1)
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
                             scene.add(mesh);
@@ -102,7 +102,7 @@
 
                     });
 
-                    renderer = new THREE.StereoEffect(renderer);
+                    renderer = new THREE.CardboardEffect(renderer);
                     renderer.setSize(window.innerWidth, window.innerHeight);
 
                     mobile = true;
