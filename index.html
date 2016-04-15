@@ -32,13 +32,13 @@
                 scene = new THREE.Scene();
 
                 camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 10);
-                camera.position.set(3, 2, 3);
+                camera.position.set(0, 0, 3);
                 camera.focalLength = camera.position.distanceTo(scene.position);
                 camera.lookAt(scene.position);
 
-                var geometry = new THREE.TorusKnotGeometry(0.64, 0.15, 150, 20);
+                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
 
-                var material = new THREE.MeshPhongMaterial({roughness: 0.01, metalness: 0.2});
+                var material = new THREE.MeshPhongMaterial({shading:THREE.FlatShading});
                 var mesh = new THREE.Mesh(geometry, material);
                 scene.add(mesh);
 
@@ -53,14 +53,8 @@
                     }
                 }
 
-                var light = new THREE.DirectionalLight(0x8800ff);
+                var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
-                light.castShadow = true;
-                light.shadow.camera.zoom = 4;
-                scene.add(light);
-
-                var light = new THREE.DirectionalLight(0xff0000);
-                light.position.set(1, 1.5, -0.5);
                 light.castShadow = true;
                 light.shadow.camera.zoom = 4;
                 scene.add(light);
@@ -74,6 +68,7 @@
                 document.body.appendChild(renderer.domElement);
 
                 controls = new THREE.OrbitControls(camera);
+                controls.autoRotate = true;
                 controls.enablePan = false;
 
                 // Our preferred controls via DeviceOrientation
