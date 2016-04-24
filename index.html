@@ -36,6 +36,7 @@
                 renderer = new THREE.WebGLRenderer({antialias: true});
                 renderer.setPixelRatio(window.devicePixelRatio);
                 renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setClearColor(0)
                 document.body.appendChild(renderer.domElement);
 
                 scene = new THREE.Scene();
@@ -50,6 +51,7 @@
                 controls.enablePan = false;
 
                 // central object
+                
                 var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
 
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
