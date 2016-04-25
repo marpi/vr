@@ -56,24 +56,17 @@
 
                 var cubeMap = getCubeMap(1)
 
-                var material = new THREE.MeshLambertMaterial({side: THREE.DoubleSide, envMap: getCubeMap(1), color: 0xFFFFFF, map: null, shading: THREE.FlatShading});
-                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
-                geometry = new THREE.SphereGeometry(2.6, 100, 100)//  30, 30)
-                
-                var mod = .3    ;
+                var material = new THREE.MeshPhongMaterial({side: THREE.DoubleSide, envMap: getCubeMap(1), color: 0xFFFFFF, shading: THREE.FlatShading});
+                var geometry = new THREE.SphereGeometry(2.6, 50, 50)//  30, 30)
+
+                var mod = .3;
                 for (var i = 0; i < geometry.vertices.length; i++) {
                     var v = geometry.vertices[i]
-                    var ran=Math.random()
-                    v.x *=ran//+= (Math.random() - .5) * mod
-                    v.y *=ran//+= (Math.random() - .5) * mod
-                    v.z *=ran//+= (Math.random() - .5) * mod
+                    var ran = Math.random()
+                    v.x *= ran//+= (Math.random() - .5) * mod
+                    v.y *= ran//+= (Math.random() - .5) * mod
+                    v.z *= ran//+= (Math.random() - .5) * mod
                 }
-
-                group = new THREE.Mesh(geom, material);
-                scene.add(group)
-
-                var texture = new THREE.TextureLoader().load("assets/textures/pano.jpg");//, envMap: getCubeMap(1)
-                console.log( THREE.DoubleSide)
                 globe = new THREE.Mesh(geometry, material);
                 scene.add(globe);
 
@@ -92,13 +85,7 @@
                 });
 
                 var skyBox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), skyBoxMaterial);
-
                 scene.add(skyBox);
-
-                //
-
-
-
 
                 // cubes
 
@@ -121,7 +108,6 @@
                     group.children[i].updateMatrix();
                     geom.merge(group.children[i].geometry, group.children[i].matrix);
                 }
-                console.log(geom.vertices)
                 var mod = .3;
                 for (var i = 0; i < geom.vertices.length; i++) {
                     var v = geom.vertices[i]
@@ -149,22 +135,6 @@
             function animate() {
 
                 requestAnimationFrame(animate);
-
-                /*var mod = .03;
-                 for (var i = 0; i < group.geometry.vertices.length; i++) {
-                 var v = group.geometry.vertices[i]
-                 v.x += (Math.random() - .5) * mod
-                 v.y += (Math.random() - .5) * mod
-                 v.z += (Math.random() - .5) * mod
-                 }
-                 group.geometry.verticesNeedUpdate = true;*/
-
-
-
-
-
-
-
                 render();
 
             }
