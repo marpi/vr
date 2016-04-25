@@ -56,13 +56,24 @@
 
                 var cubeMap = getCubeMap(1)
 
+                var material = new THREE.MeshLambertMaterial({side: THREE.DoubleSide, envMap: getCubeMap(1), color: 0xFFFFFF, map: null, shading: THREE.FlatShading});
                 var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
-                geometry = new THREE.SphereGeometry(2.6, 30, 30)//  30, 30)
+                geometry = new THREE.SphereGeometry(2.6, 100, 100)//  30, 30)
+                
+                var mod = .3    ;
+                for (var i = 0; i < geometry.vertices.length; i++) {
+                    var v = geometry.vertices[i]
+                    var ran=Math.random()
+                    v.x *=ran//+= (Math.random() - .5) * mod
+                    v.y *=ran//+= (Math.random() - .5) * mod
+                    v.z *=ran//+= (Math.random() - .5) * mod
+                }
 
+                group = new THREE.Mesh(geom, material);
+                scene.add(group)
 
                 var texture = new THREE.TextureLoader().load("assets/textures/pano.jpg");//, envMap: getCubeMap(1)
                 console.log( THREE.DoubleSide)
-                var material = new THREE.MeshBasicMaterial({side: THREE.DoubleSide, color: 0xFFFFFF, map: texture, shading: THREE.SmoothShading});
                 globe = new THREE.Mesh(geometry, material);
                 scene.add(globe);
 
@@ -91,7 +102,7 @@
 
                 // cubes
 
-                /*group = new THREE.Object3D();
+                group = new THREE.Object3D();
                 for (var _x = -3; _x <= 3; _x++) {
                     for (var _y = -3; _y <= 3; _y++) {
                         for (var _z = -3; _z <= 3; _z++) {
@@ -120,7 +131,7 @@
                 }
 
                 group = new THREE.Mesh(geom, material);
-                scene.add(group)*/
+                scene.add(group)
 
                 // light
 
