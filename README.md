@@ -2,20 +2,17 @@
 
 ![the sphere thingy](assets/image.jpg)
 
-Hi!
+### Hi!
 
 Here's our shared repo.
-The main [index.html](index.html) is the file we were editing together,
+The main [index.html](index.html) is the file we were editing together, you can see it in action here:
 
-You can see it in action here: [https://vr.marpi.pl](https://vr.marpi.pl)
+[https://vr.marpi.pl/](https://vr.marpi.pl/)
 
-If you'd like me to add you to collaborators, you'll have access to your personal repo [public/](public/),
-so you can test here: [https://vr.marpi.pl/public/](https://vr.marpi.pl/public/)
+If you send me your GitHub account I'll add you to the collaborators, you'll have access to your personal repo [public/](public/) and you'll be able to test here: [https://vr.marpi.pl/public/](https://vr.marpi.pl/public/)
 
 oh yeah, one more [thing](https://vr.marpi.pl/public/everyone) :)
 
 Thanks everyone for coming!
 
-[http://grayareafestival.io/workshops/](http://grayareafestival.io/workshops/)
-
-[http://marpi.pl/](http://marpi.pl/)
+[http://marpi.pl/](http://marpi.pl/) + [http://grayareafestival.io/](http://grayareafestival.io/)
