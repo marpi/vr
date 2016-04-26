@@ -15,3 +15,6 @@ so you can test here: [https://vr.marpi.pl/public/](https://vr.marpi.pl/public/)
 oh yeah, one more [thing](https://vr.marpi.pl/public/everyone) :)
 
 Thanks everyone for coming!
+
+[http://grayareafestival.io/workshops/](http://grayareafestival.io/workshops/)
+[http://marpi.pl/](http://marpi.pl/)
