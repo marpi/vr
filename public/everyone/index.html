@@ -55,6 +55,7 @@
 
                 var material = new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide});
                 var mesh = new THREE.Mesh(geometry, material);
+                mesh.scale.x=-1;
                 scene.add(mesh);
 
                 // light
