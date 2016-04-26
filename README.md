@@ -1,4 +1,6 @@
-# vr
+# VR Workshop at Gray Area Festival
+
+![alt tag](assets/image.jpg)
 
 Hi!
 
