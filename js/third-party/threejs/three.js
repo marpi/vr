@@ -18128,73 +18128,80 @@ THREE.ImageLoader.prototype = {
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
-		if ( this.path !== undefined ) url = this.path + url;
+		   if ( this.path !== undefined ) url = this.path + url;
 
-		var scope = this;
+        var scope = this;
 
-		var cached = THREE.Cache.get( url );
+        var cached = THREE.Cache.get( url );
 
-		if ( cached !== undefined ) {
+        if ( cached !== undefined ) {
 
-			scope.manager.itemStart( url );
+            scope.manager.itemStart( url );
 
-			if ( onLoad ) {
+            if ( onLoad ) {
 
-				setTimeout( function () {
+                setTimeout( function () {
 
-					onLoad( cached );
+                    onLoad( cached );
 
-					scope.manager.itemEnd( url );
+                    scope.manager.itemEnd( url );
 
-				}, 0 );
+                }, 0 );
 
-			} else {
+            } else {
 
-				scope.manager.itemEnd( url );
+                scope.manager.itemEnd( url );
 
-			}
+            }
 
-			return cached;
+            return cached;
 
-		}
+        }
 
-		var image = document.createElement( 'img' );
+        var image = document.createElement( 'img' );
 
-		image.addEventListener( 'load', function ( event ) {
+        image.addEventListener( 'load', function ( event ) {    }, false );
 
-			THREE.Cache.add( url, this );
+        if ( onProgress !== undefined ) {
 
-			if ( onLoad ) onLoad( this );
+            image.addEventListener( 'progress', function ( event ) {
 
-			scope.manager.itemEnd( url );
+                onProgress( event );
 
-		}, false );
+            }, false );
 
-		if ( onProgress !== undefined ) {
+        }
 
-			image.addEventListener( 'progress', function ( event ) {
+        image.addEventListener( 'error', function ( event ) {
 
-				onProgress( event );
+            if ( onError ) onError( event );
 
-			}, false );
+            scope.manager.itemError( url );
 
-		}
+        }, false );
 
-		image.addEventListener( 'error', function ( event ) {
+        if ( this.crossOrigin !== undefined ) image.crossOrigin = this.crossOrigin;
 
-			if ( onError ) onError( event );
+        scope.manager.itemStart( url );
 
-			scope.manager.itemError( url );
+        image.src = url;
 
-		}, false );
+        var checkingClearId = setInterval(function () {
+            if (isImageLoaded(image)) {
+                clearInterval(checkingClearId);
+                THREE.Cache.add( url, image );
 
-		if ( this.crossOrigin !== undefined ) image.crossOrigin = this.crossOrigin;
+                if ( onLoad ) onLoad( image );
 
-		scope.manager.itemStart( url );
+                scope.manager.itemEnd( url );
+            }
 
-		image.src = url;
+        }, 100);
 
-		return image;
+        function isImageLoaded(imgTag){
+            return imgTag["complete"] || imgTag["readyState"] == "complete";
+        };
+        return image;
 
 	},
 
