@@ -68,13 +68,13 @@
                 
 
                 // central object
-                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
+                // var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
 
-                // var material = new THREE.MeshPhongMaterial({color: 0xFFFFFF,envMap:getCubeMap(5), shading: THREE.FlatShading});
-                var material = new THREE.MeshPhongMaterial({color: 0xFFFFFF, shading: THREE.FlatShading});
+                // // var material = new THREE.MeshPhongMaterial({color: 0xFFFFFF,envMap:getCubeMap(5), shading: THREE.FlatShading});
+                // var material = new THREE.MeshPhongMaterial({color: 0xFFFFFF, shading: THREE.FlatShading});
 
-                var mesh = new THREE.Mesh(geometry, material);
-                scene.add(mesh);
+                // var mesh = new THREE.Mesh(geometry, material);
+                // scene.add(mesh);
                 
                 
                 ////A
@@ -114,34 +114,42 @@
 
                 // central object
 
-                var geometry = new THREE.SphereGeometry(2.6 , 20, 18)//  30, 30)
+                // var geometry = new THREE.SphereGeometry(2.6 , 20, 18)//  30, 30)
 
-                var mod = .3;
-                var group = new THREE.Object3D();
+                // var mod = .3;
+                // var group = new THREE.Object3D();
 
-                var geom = new THREE.Geometry()
-                var material = new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading } );
+                // var geom = new THREE.Geometry()
+                // var material = new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading } );
 
-                for (var i = 0; i < geometry.vertices.length; i++) {
-                    var v = geometry.vertices[i]
-                    var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
-                    var mesh = new THREE.Mesh(geo, material)
-                    var _x = v.x + Math.random() - .5 
-                    var _y = v.y + Math.random() - .5
-                    var _z = v.z + Math.random() - .5
-                    mesh.position.set(_x, _y, _z) 
-                    group.add(mesh) ; 
-                }
+                // for (var i = 0; i < geometry.vertices.length; i++) {
+                //     var v = geometry.vertices[i]
+                //     var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
+                //     var mesh = new THREE.Mesh(geo, material)
+                //     var _x = v.x + Math.random() - .5 
+                //     var _y = v.y + Math.random() - .5
+                //     var _z = v.z + Math.random() - .5
+                //     mesh.position.set(_x, _y, _z) 
+                //     group.add(mesh) ; 
+                // }
 
-                for (var i = 0; i < group.children.length; i++) {
-                 group.children[i].updateMatrix();
-                 geom.merge(group.children[i].geometry, group.children[i].matrix);
-                }
+                // for (var i = 0; i < group.children.length; i++) {
+                //  group.children[i].updateMatrix();
+                //  geom.merge(group.children[i].geometry, group.children[i].matrix);
+                // }
                 
-                group = new THREE.Mesh(geom, material);
-                scene.add(group)
+                // group = new THREE.Mesh(geom, material);
+                // scene.add(group)
+                var center = new THREE.Vector3(0,0,0);
+                var color = new THREE.Color(0xffffff );
 
-                
+                var group = scatteredSphere(center, 2.6, color)
+                scene.add (group)
+
+                var center1 = new THREE.Vector3(4,0,0);
+                var color1 = new THREE.Color(0xff00ff );
+                var group1 = scatteredSphere(center1, 3, color1)
+                scene.add (group1)
 
                 // globe = new THREE.Mesh(geometry, material);
                 // scene.add(globe);
@@ -159,6 +167,37 @@
                 window.addEventListener('deviceorientation', setOrientationControls, true);
                 window.addEventListener('resize', onWindowResize, false);
 
+            }
+
+            function scatteredSphere( sCenterVertice, sRadius, sColor ){
+
+
+                var geometry = new THREE.SphereGeometry(sRadius , 20, 18)//  30, 30)
+
+                var mod = .3;
+                var group = new THREE.Object3D();
+
+                var geom = new THREE.Geometry()
+                var material = new THREE.MeshPhongMaterial( { color: sColor, shading: THREE.FlatShading } );
+
+                for (var i = 0; i < geometry.vertices.length; i++) {
+                    var v = geometry.vertices[i]
+                    var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
+                    var mesh = new THREE.Mesh(geo, material)
+                    var _x = sCenterVertice.x + v.x + Math.random() - .5 
+                    var _y = sCenterVertice.y + v.y + Math.random() - .5
+                    var _z = sCenterVertice.z + v.z + Math.random() - .5
+                    mesh.position.set(_x, _y, _z) 
+                    group.add(mesh) ; 
+                }
+
+                for (var i = 0; i < group.children.length; i++) {
+                 group.children[i].updateMatrix();
+                 geom.merge(group.children[i].geometry, group.children[i].matrix);
+                }
+                
+                group = new THREE.Mesh(geom, material);
+                return group 
             }
 
             function animate() {
