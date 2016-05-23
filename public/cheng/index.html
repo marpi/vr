@@ -28,6 +28,7 @@
             var camera, scene, renderer;
             var effect;
             var mobile = false;
+            var restaurants = ["Delicious Dimsum", "House of Prime Rib","Chez Moi", "Grill to Chill","Cafe Delfina","Swan Oyster Depot","Mikeller's Beer Garden","Muracci's Curry","Onigilly Cafe","Dosa Brothers","SF Wraps","Cafe Claude",];
 
             init();
             animate();
@@ -45,7 +46,7 @@
                 scene = new THREE.Scene();
 
                 camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
-                camera.position.set(0, 0, 4);
+                camera.position.set(0, 0, 5);
                 camera.focalLength = camera.position.distanceTo(scene.position);
                 camera.lookAt(scene.position);
 
@@ -69,7 +70,7 @@
 
                 scene.add(skyBox);
                 
-
+                scene.fog = new THREE.Fog(0x000000,1500,2100)
                 // central object
                 // var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
 
@@ -146,23 +147,18 @@
                 var center = new THREE.Vector3(-2,0,0);
                 var color = new THREE.Color(0xffffff );
 
-                var group = scatteredSphere(center, 2.6, color)
+                var group = scatteredSphere("JP Kuchen", center, 2.6, color, false )
                 scene.add (group)
 
-                var center1 = new THREE.Vector3(1.6,0,0);
+                var center1 = new THREE.Vector3(2,0,0);
                 var color1 = new THREE.Color(0xff00ff );
-                var group1 = scatteredSphere(center1, 3, color1)
+                var group1 = scatteredSphere("ad sdaf", center1, 2.7, color1, true)
                 scene.add (group1)
 
                 // globe = new THREE.Mesh(geometry, material);
                 // scene.add(globe);
 
             ////
-
-                var spritey = makeTextSprite( " Hello, ", 
-                    { fontsize: 20, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
-                spritey.position.set(1,0,0);
-                scene.add( spritey );
 
                 // light
 
@@ -186,7 +182,7 @@
                     parameters["fontface"] : "Arial";
                 
                 var fontsize = parameters.hasOwnProperty("fontsize") ? 
-                    parameters["fontsize"] : 18;
+                    parameters["fontsize"] : 20;
                 
                 var borderThickness = parameters.hasOwnProperty("borderThickness") ? 
                     parameters["borderThickness"] : 4;
@@ -197,6 +193,8 @@
                 var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
                     parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
 
+                var textColor = parameters.hasOwnProperty("textColor") ?
+                    parameters["textColor"]:{ r:255, g:255, b:255, a:1.0 };
                 // var spriteAlignment = THREE.SpriteAlignment.topLeft;
                     
                 var canvas = document.createElement('canvas');
@@ -219,7 +217,10 @@
                 // // 1.4 is extra height factor for text below baseline: g,j,p,q.
                 
                 // text color
-                context.fillStyle = "rgba(255, 255, 255, 1.0)";
+                context.fillStyle = "rgba(" + textColor.r + "," + textColor.g + ","
+                                              + textColor.b + "," + textColor.a + ")";
+
+                //"rgba(255, 255, 255, 1.0)";
 
                 context.fillText( message, borderThickness, fontsize + borderThickness);
                 
@@ -237,16 +238,37 @@
 
           
 
-            function scatteredSphere( sCenterVertice, sRadius, sColor ){
+            function scatteredSphere(sName, sCenterVertice, sRadius, sColor, ifHighlighting ){
 
 
                 var geometry = new THREE.SphereGeometry(sRadius , 20, 18)//  30, 30)
 
                 var mod = .3;
                 var group = new THREE.Object3D();
-
+                //for dots
                 var geom = new THREE.Geometry()
-                var material = new THREE.MeshPhongMaterial( { color: sColor, shading: THREE.FlatShading } );
+                var material = new THREE.MeshPhongMaterial( { color: sColor, shading: THREE.FlatShading, fog:true  } );
+                var restaurantInd = 0 ; 
+
+
+                // central sphere
+                var cgeometry = new THREE.SphereGeometry(0.1, 2, 2);
+                var cmaterial = new THREE.MeshPhongMaterial({color: 0x00FFFF, shading: THREE.FlatShading});
+                var cmesh = new THREE.Mesh(cgeometry, cmaterial);
+                cmesh.position.set(sCenterVertice.x, sCenterVertice.y, sCenterVertice.z) ;
+                group.add(cmesh);
+                
+
+
+                var name = makeTextSprite( sName, 
+                    { fontsize: 30, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+                
+                if(ifHighlighting){ //hack 
+                    name.position.set(sCenterVertice.x+0.6 , sCenterVertice.y,sCenterVertice.z);
+                }else {
+                    name.position.set(sCenterVertice.x,sCenterVertice.y,sCenterVertice.z);
+                }
+                scene.add( name );    
 
                 for (var i = 0; i < geometry.vertices.length; i++) {
                     var v = geometry.vertices[i]
@@ -257,6 +279,17 @@
                     var _z = sCenterVertice.z + v.z + Math.random() - .5
                     mesh.position.set(_x, _y, _z) 
                     group.add(mesh) ; 
+
+                    if(ifHighlighting && restaurantInd< restaurants.length){
+                       if(i==214 || i == 235 || i == 172 || i == 270 || i == 338 || i ==162 || i == 183 
+                        || i == 151 || i == 125 || i == 300 ){
+                        var spritey = makeTextSprite( restaurants[restaurantInd], 
+                                { fontsize: 20, textColor:{r:0, g:100, b:100, a:1.0},  borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8}  } );
+                        spritey.position.set(_x, _y, _z);
+                        scene.add( spritey );
+                        restaurantInd++ ;
+                        }
+                    }
                 }
 
                 for (var i = 0; i < group.children.length; i++) {
