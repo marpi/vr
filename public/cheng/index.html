@@ -147,14 +147,15 @@
                 var center = new THREE.Vector3(-2,0,0);
                 var color = new THREE.Color(0xffffff );
 
-                scatteredSphere("JP Kuchen", center, 2.6, color, false )
+                addScatteredSphere("Cheng Xu", center, 2.6, color, false )
                 // scene.add (group)
 
                 var center1 = new THREE.Vector3(2,0,0);
                 var color1 = new THREE.Color(0xff00ff );
-                scatteredSphere("ad sdaf", center1, 2.7, color1, true)
+                addScatteredSphere("Janak Dadhaniya", center1, 2.7, color1, true)
                 // scene.add (group1)
 
+                addSharedDots();
                 // globe = new THREE.Mesh(geometry, material);
                 // scene.add(globe);
 
@@ -175,7 +176,7 @@
 
 
             function makeTextSprite( message, parameters )
-            {
+            {   
                 if ( parameters === undefined ) parameters = {};
                 
                 var fontface = parameters.hasOwnProperty("fontface") ? 
@@ -216,6 +217,7 @@
                 // roundRect(context, borderThickness/2, borderThickness/2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
                 // // 1.4 is extra height factor for text below baseline: g,j,p,q.
                 
+                
                 // text color
                 context.fillStyle = "rgba(" + textColor.r + "," + textColor.g + ","
                                               + textColor.b + "," + textColor.a + ")";
@@ -236,14 +238,41 @@
                 return sprite;  
             }
 
-          
+            function addSharedDots(){
+                restaurantInd =  0
+                var mod = 5
 
-            function scatteredSphere(sName, sCenterVertice, sRadius, sColor, ifHighlighting ){
+                while(restaurantInd < restaurants.length){
+                   
+                    var _x = Math.random() - .5 
+                    var _y = mod*(Math.random() - .5) 
+                    var _z = mod*(Math.random() - .5) 
+                  
+                    var spritey = makeTextSprite( restaurants[restaurantInd], 
+                            { fontsize: 20, textColor:{r:255, g:255, b:255, a:1.0} } );
+                    spritey.position.set(_x, _y, _z);
+                    scene.add( spritey );
+                    // console.log("restaurantInd "+restaurantInd + "/total " + restaurants.length )
+                    restaurantInd++ ;
+
+                    var _geo = new THREE.BoxGeometry(.2, .2, .2, 1, 1, 1)
+                    var _material = new THREE.MeshPhongMaterial( { color: 0xFFFFFF, shading: THREE.FlatShading, fog:true  } );
+                    var _mesh = new THREE.Mesh(_geo, _material)
+                    _mesh.position.set(_x,_y,_z)
+                    scene.add(_mesh) 
+
+                }
+
+            }
+            
+            
+
+            function addScatteredSphere(sName, sCenterVertice, sRadius, sColor, ifHighlighting ){
 
 
-                var geometry = new THREE.SphereGeometry(sRadius , 20, 18)//  30, 30)
+                var geometry = new THREE.SphereGeometry(sRadius , 15, 15)// 20, 18
 
-                var mod = .3;
+                // var mod = .3;
                 // var group = new THREE.Object3D();
                 //for dots
                 var geom = new THREE.Geometry()
@@ -259,12 +288,13 @@
                 scene.add(cmesh);
                 
 
-
+                
                 var name = makeTextSprite( sName, 
-                    { fontsize: 30, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+                    { fontsize: 30 } );
                 
                 if(ifHighlighting){ //hack 
                     name.position.set(sCenterVertice.x+0.6 , sCenterVertice.y,sCenterVertice.z);
+                    
                 }else {
                     name.position.set(sCenterVertice.x,sCenterVertice.y,sCenterVertice.z);
                 }
@@ -303,7 +333,7 @@
                 // group = new THREE.Mesh(geom, material);
                 // return group 
             }
-            
+
             function animate() {
 
                 requestAnimationFrame(animate);
