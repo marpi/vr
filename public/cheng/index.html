@@ -147,13 +147,13 @@
                 var center = new THREE.Vector3(-2,0,0);
                 var color = new THREE.Color(0xffffff );
 
-                var group = scatteredSphere("JP Kuchen", center, 2.6, color, false )
-                scene.add (group)
+                scatteredSphere("JP Kuchen", center, 2.6, color, false )
+                // scene.add (group)
 
                 var center1 = new THREE.Vector3(2,0,0);
                 var color1 = new THREE.Color(0xff00ff );
-                var group1 = scatteredSphere("ad sdaf", center1, 2.7, color1, true)
-                scene.add (group1)
+                scatteredSphere("ad sdaf", center1, 2.7, color1, true)
+                // scene.add (group1)
 
                 // globe = new THREE.Mesh(geometry, material);
                 // scene.add(globe);
@@ -244,7 +244,7 @@
                 var geometry = new THREE.SphereGeometry(sRadius , 20, 18)//  30, 30)
 
                 var mod = .3;
-                var group = new THREE.Object3D();
+                // var group = new THREE.Object3D();
                 //for dots
                 var geom = new THREE.Geometry()
                 var material = new THREE.MeshPhongMaterial( { color: sColor, shading: THREE.FlatShading, fog:true  } );
@@ -256,7 +256,7 @@
                 var cmaterial = new THREE.MeshPhongMaterial({color: 0x00FFFF, shading: THREE.FlatShading});
                 var cmesh = new THREE.Mesh(cgeometry, cmaterial);
                 cmesh.position.set(sCenterVertice.x, sCenterVertice.y, sCenterVertice.z) ;
-                group.add(cmesh);
+                scene.add(cmesh);
                 
 
 
@@ -270,37 +270,40 @@
                 }
                 scene.add( name );    
 
+                // console.log(material.color)
+                // material.color.setHSL(0.1,0.75,0.5);
+                // console.log(material.color)
+
                 for (var i = 0; i < geometry.vertices.length; i++) {
                     var v = geometry.vertices[i]
                     var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
-                    var mesh = new THREE.Mesh(geo, material)
+                    
+                    var m = material.clone();
+                    if(ifHighlighting){
+                        m.color.setHSL( .1-.1*Math.random(), 1,0.5)
+                    }else{
+                        m.color.setHSL( 0.6-.2*Math.random(), 0.75,0.5)
+                    }
+                    
+                     var mesh = new THREE.Mesh(geo, m)
+
                     var _x = sCenterVertice.x + v.x + Math.random() - .5 
                     var _y = sCenterVertice.y + v.y + Math.random() - .5
                     var _z = sCenterVertice.z + v.z + Math.random() - .5
+
                     mesh.position.set(_x, _y, _z) 
-                    group.add(mesh) ; 
-
-                    if(ifHighlighting && restaurantInd< restaurants.length){
-                       if(i==214 || i == 235 || i == 172 || i == 270 || i == 338 || i ==162 || i == 183 
-                        || i == 151 || i == 125 || i == 300 ){
-                        var spritey = makeTextSprite( restaurants[restaurantInd], 
-                                { fontsize: 20, textColor:{r:0, g:100, b:100, a:1.0},  borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8}  } );
-                        spritey.position.set(_x, _y, _z);
-                        scene.add( spritey );
-                        restaurantInd++ ;
-                        }
-                    }
+                    scene.add(mesh) ; 
                 }
 
-                for (var i = 0; i < group.children.length; i++) {
-                 group.children[i].updateMatrix();
-                 geom.merge(group.children[i].geometry, group.children[i].matrix);
-                }
+                // for (var i = 0; i < group.children.length; i++) {
+                //  group.children[i].updateMatrix();
+                //  geom.merge(group.children[i].geometry, group.children[i].matrix);
+                // }
                 
-                group = new THREE.Mesh(geom, material);
-                return group 
+                // group = new THREE.Mesh(geom, material);
+                // return group 
             }
-
+            
             function animate() {
 
                 requestAnimationFrame(animate);
