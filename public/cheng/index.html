@@ -51,7 +51,7 @@
                 camera.lookAt(scene.position);
 
                 controls = new THREE.OrbitControls(camera);
-                controls.autoRotate = false; //true; //automatically rotate the scene if viewed from computer 
+                controls.autoRotate = true; //automatically rotate the scene if viewed from computer 
                 controls.enablePan = false;
 
                 //background 
@@ -346,8 +346,8 @@
                 controls.update();
 
                 if (mobile) {
-                    camera.position.set(0, 0, 0)
-                    camera.translateZ(4.5);
+                    camera.position.set(0, 0, 1)
+                    camera.translateZ(4.9);
                 }
                 renderer.render(scene, camera);
 
