@@ -249,14 +249,14 @@
                     var _z = mod*(Math.random() - .5) 
                   
                     var spritey = makeTextSprite( restaurants[restaurantInd], 
-                            { fontsize: 20, textColor:{r:255, g:255, b:255, a:1.0} } );
+                            { fontsize: 20, textColor:{r:205, g:205, b:205, a:1.0} } );
                     spritey.position.set(_x, _y, _z);
                     scene.add( spritey );
                     // console.log("restaurantInd "+restaurantInd + "/total " + restaurants.length )
                     restaurantInd++ ;
 
                     var _geo = new THREE.BoxGeometry(.2, .2, .2, 1, 1, 1)
-                    var _material = new THREE.MeshPhongMaterial( { color: 0xFFFFFF, shading: THREE.FlatShading, fog:true  } );
+                    var _material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF, shading: THREE.FlatShading } );
                     var _mesh = new THREE.Mesh(_geo, _material)
                     _mesh.position.set(_x,_y,_z)
                     scene.add(_mesh) 
@@ -289,13 +289,16 @@
                 
 
                 
-                var name = makeTextSprite( sName, 
-                    { fontsize: 30 } );
+               
                 
                 if(ifHighlighting){ //hack 
+                     var name = makeTextSprite( sName, 
+                    { fontsize: 30 , textColor: {r:243, g:134, b:48, a:1.0} } );
                     name.position.set(sCenterVertice.x+0.6 , sCenterVertice.y,sCenterVertice.z);
-                    
+                    // name.fillStyle = "rgba(1, 0, 0, 1.0) ";
                 }else {
+                     var name = makeTextSprite( sName, 
+                    { fontsize: 30 , textColor: {r:107, g:219, b:231, a:1.0} } );
                     name.position.set(sCenterVertice.x,sCenterVertice.y,sCenterVertice.z);
                 }
                 scene.add( name );    
