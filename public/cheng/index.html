@@ -55,22 +55,23 @@
                 controls.enablePan = false;
 
                 //background 
-                var cubeShader = THREE.ShaderLib['cube'];
-                cubeShader.uniforms['tCube'].value = getCubeMap(10); //5 //10
+                // var cubeShader = THREE.ShaderLib['cube'];
+                // cubeShader.uniforms['tCube'].value = getCubeMap(10); //5 //10
 
-                var skyBoxMaterial = new THREE.ShaderMaterial({
-                    fragmentShader: cubeShader.fragmentShader,
-                    vertexShader: cubeShader.vertexShader,
-                    uniforms: cubeShader.uniforms,
-                    depthWrite: false,
-                    side: THREE.BackSide
-                });
+                // var skyBoxMaterial = new THREE.ShaderMaterial({
+                //     fragmentShader: cubeShader.fragmentShader,
+                //     vertexShader: cubeShader.vertexShader,
+                //     uniforms: cubeShader.uniforms,
+                //     depthWrite: false,
+                //     side: THREE.BackSide
 
-                var skyBox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), skyBoxMaterial);
+                // });
 
-                scene.add(skyBox);
+                // var skyBox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), skyBoxMaterial);
+
+                // scene.add(skyBox);
                 
-                scene.fog = new THREE.Fog(0x000000,1500,2100)
+                // scene.fog = new THREE.Fog(0x000000,1500,2100)
                 // central object
                 // var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
 
