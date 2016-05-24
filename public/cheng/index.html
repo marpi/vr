@@ -165,8 +165,10 @@
 
                 var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
-                scene.add(light);
 
+                scene.add(light);
+                light = new THREE.AmbientLight( 0x404040 ); // soft white light
+                scene.add( light );
                 // events
 
                 window.addEventListener('deviceorientation', setOrientationControls, true);
