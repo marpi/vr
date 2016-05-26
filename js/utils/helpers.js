@@ -60,7 +60,7 @@ function getCubeMap(i) {
     var loader = new THREE.ImageLoader();
     var pre = "assets/textures/";
     if (user)
-        pre = "../assets/textures/";
+        pre = "../../assets/textures/";
     var file = pre + envMaps[i].file;
     var size = envMaps[i].size;
     loader.load(file, function (image) {
