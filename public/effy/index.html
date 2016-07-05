@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>vr</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
+            body {
+                margin: 0px;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+
+        <script src="js/third-party/threejs/three.js"></script>
+        <script src="js/third-party/threejs/geometries/ConvexGeometry.js"></script>
+        <script src="js/third-party/threejs/controls/DeviceOrientationControls.js"></script>
+        <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
+        <script src="js/utils/helpers.js"></script>
+
+        <script>
+            var user = false;
+
+            var camera, scene, renderer;
+            var effect;
+            var mobile = false;
+            var amo = 2;
+
+            init();
+            animate();
+
+            function init() {
+
+                // setup
+
+                renderer = new THREE.WebGLRenderer({antialias: true});
+                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(renderer.domElement);
+
+                scene = new THREE.Scene();
+
+                camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
+                camera.position.set(0, 0, 3);
+                camera.focalLength = camera.position.distanceTo(scene.position);
+                camera.lookAt(scene.position);
+
+                controls = new THREE.OrbitControls(camera);
+                controls.autoRotate = true;
+                controls.enablePan = false;
+
+                // central object
+                var points = [
+                    new THREE.Vector3( -0.04, -0.03, -0.09 ),
+                    new THREE.Vector3( 0.03, 0.03, 0.09 ),
+                    new THREE.Vector3( -0.027, 0.05, -0.06 ),
+                    new THREE.Vector3( 0.1, 0.06, -0.07 ),
+                    new THREE.Vector3( 0.09, -0.08, 0.08 ),
+                    new THREE.Vector3( 0.04, -0.04, 0.02 ),
+                    new THREE.Vector3( -0.02, -0.06, 0.02 ),
+                    new THREE.Vector3( -0.05, 0.006, 0.06 ),
+                    new THREE.Vector3( 0.01, -0.025, -0.04 ),
+                ];  
+                //var  material = new THREE.MeshNormalMaterial(); 
+                var material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true } );
+                var geometry = new THREE.ConvexGeometry(points);
+                var mesh1 = new THREE.Mesh(geometry, material);
+
+                var group = new THREE.Object3D();
+                for (var _x = -amo; _x <= amo; _x++) {
+                    for (var _y = -amo; _y <= amo; _y++) {
+                        for (var _z = -amo; _z <= amo; _z++) {
+                            mesh = new THREE.Mesh(geometry,material);
+                            mesh.position.set(_x, _y, _z);
+                            mesh.rotation.x = Math.floor(Math.random() * 6) + 1;
+                            mesh.rotation.y = Math.floor(Math.random() * 6) + 1;
+                            mesh.rotation.z = Math.floor(Math.random() * 6) + 1;
+                            group.add(mesh);
+                        }
+                    }
+                }
+
+                
+                // merge
+                
+                var geom = new THREE.Geometry()
+                for (var i = 0; i < group.children.length; i++) {
+                    group.children[i].updateMatrix();
+                    geom.merge(group.children[i].geometry, group.children[i].matrix);
+                }
+                group = new THREE.Mesh(geom, material);
+                scene.add(group);
+
+                // light
+
+                var light = new THREE.DirectionalLight(0xffffff);
+                light.position.set(-1, 1.5, 0.5);
+                scene.add(light);
+
+                // events
+
+                window.addEventListener('deviceorientation', setOrientationControls, true);
+                window.addEventListener('resize', onWindowResize, false);
+
+            }
+
+            function animate() {
+
+                requestAnimationFrame(animate);
+                render();
+
+            }
+
+            function render() {
+
+                controls.update();
+
+                if (mobile) {
+                    camera.position.set(0, 0, 0)
+                    camera.translateZ(5);
+                }
+                renderer.render(scene, camera);
+
+            }
+
+        </script>
+
+    </body>
+</html>
