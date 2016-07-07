@@ -12,12 +12,22 @@
         </style>
     </head>
     <body>
-
         <script src="js/third-party/threejs/three.js"></script>
         <script src="js/third-party/threejs/geometries/ConvexGeometry.js"></script>
         <script src="js/third-party/threejs/controls/DeviceOrientationControls.js"></script>
         <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
         <script src="js/utils/helpers.js"></script>
+        <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
+        <script>
+        SC.initialize({
+            client_id: '49ba2a48cbbc0c2d15c40a87941fd513'});
+            var track_url = 'http://soundcloud.com/forss/flickermood';
+            
+            SC.stream("/tracks/293").then(function(player){
+                player.play();
+
+            });
+        </script>
 
         <script>
             var user = false;
