@@ -39,6 +39,7 @@
             var amo = 2;
 
             init();
+
             animate();
 
             function init() {
@@ -61,84 +62,140 @@
                 controls.autoRotate = true;
                 controls.enablePan = false;
 
+
+
+
+
+
+
                 // add butterfly
                 prepareButterfly();
                 
                 function prepareButterfly() {
-                butterfly = new THREE.Object3D();
-                leftwing = new THREE.Object3D();
-                rightwing = new THREE.Object3D();
-                
-                butterfly.add(leftwing)
-                rightwing.scale.x = -1
-                butterfly.add(rightwing)
-                scene.add(butterfly)
+                    butterfly = new THREE.Object3D();
+                    leftwing = new THREE.Object3D();
+                    rightwing = new THREE.Object3D();
+                    
+                    butterfly.add(leftwing)
+                    rightwing.scale.x = -1
+                    butterfly.add(rightwing)
+                    scene.add(butterfly)
 
-                loadButterflyWing()
-                
+                    loadButterflyWing()
                 }
 
                 function loadButterflyWing() {
-                var loader = new THREE.OBJLoader();
-                loader.load( 'assets/butterfly.obj', function (object){
-                            object.material = new THREE.MeshStandardMaterial({color: 0x0055ff});
-                            object.position.y = 0;
-                            object.position.x = 0;
-                            object.position.z = 0;
-                            object.scale.multiplyScalar( 0.02 );
+                    var loader = new THREE.OBJLoader();
+                    loader.load( 'assets/butterfly.obj', function (object){
+                                object.material = new THREE.MeshStandardMaterial({color: 0x0055ff});
+                                object.position.y = 0;
+                                object.position.x = 0;
+                                object.position.z = 0;
+                                object.scale.multiplyScalar( 0.02 );
 
-                            leftwing.add(object);
-                            var clone = object.clone();
-                            rightwing.add(clone);
-                        }
-                    );
+                                leftwing.add(object);
+                                var clone = object.clone();
+                                rightwing.add(clone);
+                            }
+                        );
                 }
 
 
 
-                //
 
-                // object
-                var points = [
-                    new THREE.Vector3( -0.04, -0.03, -0.09 ),
-                    new THREE.Vector3( 0.03, 0.03, 0.09 ),
-                    new THREE.Vector3( -0.027, 0.05, -0.06 ),
-                    new THREE.Vector3( 0.1, 0.06, -0.07 ),
-                    new THREE.Vector3( 0.09, -0.08, 0.08 ),
-                    new THREE.Vector3( 0.04, -0.04, 0.02 ),
-                    new THREE.Vector3( -0.02, -0.06, 0.02 ),
-                    new THREE.Vector3( -0.05, 0.006, 0.06 ),
-                    new THREE.Vector3( 0.01, -0.025, -0.04 ),
-                ];  
-                //var  material = new THREE.MeshNormalMaterial(); 
-                var material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true } );
-                var geometry = new THREE.ConvexGeometry(points);
-                var mesh1 = new THREE.Mesh(geometry, material);
+                    //load Json
 
-                var group = new THREE.Object3D();
-                for (var _x = -amo; _x <= amo; _x++) {
-                    for (var _y = -amo; _y <= amo; _y++) {
-                        for (var _z = -amo; _z <= amo; _z++) {
-                            mesh = new THREE.Mesh(geometry,material);
-                            mesh.position.set(_x, _y, _z);
-                            mesh.rotation.x = Math.floor(Math.random() * 6) + 1;
-                            mesh.rotation.y = Math.floor(Math.random() * 6) + 1;
-                            mesh.rotation.z = Math.floor(Math.random() * 6) + 1;
-                            group.add(mesh);
+                    var request = new XMLHttpRequest();
+                    request.open('GET', 'assets/sorted_data.json', true);
+
+                    request.onload = function() {
+                      if (request.status >= 200 && request.status < 400) {
+                        // Success!
+                        //console.log(request.responseText);
+                        
+                        var messages = JSON.parse(request.responseText);
+                        var group = makeGroup()
+                         for (var i = 0; i< messages.length; i++){
+                                var time = new Date(messages[i].timestamp).getTime();
+                                var newTime1 = (time/10000)-137705670;
+
+                                function map_range(value, low1, high1, low2, high2) {
+                                    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+                                }
+                                var newTime2 = map_range(newTime1, 0, 9425592, 0, 1000);
+                                console.log(newTime2);
+                                addObject(z, group);
+                       
+
                         }
+                      } else {
+                        // We reached our target server, but it returned an error
+                      }
+                    };
+
+                    request.onerror = function() {
+                      // There was a connection error of some sort
+                    };
+
+                    request.send();
+                   
+
+
+
+                function makeObject(z, group){
+
+                    var points = [
+                        new THREE.Vector3( -0.04, -0.03, -0.09 ),
+                        new THREE.Vector3( 0.03, 0.03, 0.09 ),
+                        new THREE.Vector3( -0.027, 0.05, -0.06 ),
+                        new THREE.Vector3( 0.1, 0.06, -0.07 ),
+                        new THREE.Vector3( 0.09, -0.08, 0.08 ),
+                        new THREE.Vector3( 0.04, -0.04, 0.02 ),
+                        new THREE.Vector3( -0.02, -0.06, 0.02 ),
+                        new THREE.Vector3( -0.05, 0.006, 0.06 ),
+                        new THREE.Vector3( 0.01, -0.025, -0.04 ),
+                    ];
+
+                    var material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true } );
+                    var geometry = new THREE.ConvexGeometry(points);
+                    var mesh = new THREE.Mesh(geometry, material);
+
+                    var group = new THREE.Object3D();                   
+                        
+                       
+
+                       mesh.position.set(0, 0, newTime2);
+
+ÅÅ
+                    
+
+
+                    
+                //     for (var _x = -amo; _x <= amo; _x++) {
+                //         for (var _y = -amo; _y <= amo; _y++) {
+                //             for (var _z = -amo; _z <= amo; _z++) {
+                //                 mesh = new THREE.Mesh(geometry,material);
+                //                 mesh.position.set(_x, _y, _z);
+                //                 group.add(mesh);
+                //             }
+                //         }
+                //     }
+
+                    var geom = new THREE.Geometry()
+                    
+                    for (var i = 0; i < group.children.length; i++) {
+                        group.children[i].updateMatrix();
+                        geom.merge(group.children[i].geometry, group.children[i].matrix);
                     }
+                    group = new THREE.Mesh(geom, material);
+                //scene.add(group);
+
+
+
                 }
 
-                
-                // merge
-                
-                var geom = new THREE.Geometry()
-                for (var i = 0; i < group.children.length; i++) {
-                    group.children[i].updateMatrix();
-                    geom.merge(group.children[i].geometry, group.children[i].matrix);
-                }
-                group = new THREE.Mesh(geom, material);
-                scene.add(group);
+                makeObject()
+
 
                 // light
 
