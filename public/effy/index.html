@@ -16,6 +16,7 @@
         <script src="js/third-party/threejs/geometries/ConvexGeometry.js"></script>
         <script src="js/third-party/threejs/controls/DeviceOrientationControls.js"></script>
         <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
+        <script src="js/third-party/threejs/loaders/OBJLoader.js"></script>
         <script src="js/utils/helpers.js"></script>
         <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
         <script>
@@ -60,7 +61,44 @@
                 controls.autoRotate = true;
                 controls.enablePan = false;
 
-                // central object
+                // add butterfly
+                prepareButterfly();
+                
+                function prepareButterfly() {
+                butterfly = new THREE.Object3D();
+                leftwing = new THREE.Object3D();
+                rightwing = new THREE.Object3D();
+                
+                butterfly.add(leftwing)
+                rightwing.scale.x = -1
+                butterfly.add(rightwing)
+                scene.add(butterfly)
+
+                loadButterflyWing()
+                
+                }
+
+                function loadButterflyWing() {
+                var loader = new THREE.OBJLoader();
+                loader.load( 'assets/butterfly.obj', function (object){
+                            object.material = new THREE.MeshStandardMaterial({color: 0x0055ff});
+                            object.position.y = 0;
+                            object.position.x = 0;
+                            object.position.z = 0;
+                            object.scale.multiplyScalar( 0.02 );
+
+                            leftwing.add(object);
+                            var clone = object.clone();
+                            rightwing.add(clone);
+                        }
+                    );
+                }
+
+
+
+                //
+
+                // object
                 var points = [
                     new THREE.Vector3( -0.04, -0.03, -0.09 ),
                     new THREE.Vector3( 0.03, 0.03, 0.09 ),
