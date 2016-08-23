@@ -23,20 +23,18 @@
         SC.initialize({
             client_id: '49ba2a48cbbc0c2d15c40a87941fd513'});
             var track_url = 'http://soundcloud.com/forss/flickermood';
-            
             SC.stream("/tracks/293").then(function(player){
                 player.play();
-
             });
         </script>
 
         <script>
             var user = false;
-
-            var camera, scene, renderer;
+            var camera, scene, renderer, group;
             var effect;
+
             var mobile = false;
-            var amo = 2;
+            var num = 2;
 
             init();
 
@@ -62,139 +60,87 @@
                 controls.autoRotate = true;
                 controls.enablePan = false;
 
-
-
-
-
-
-
                 // add butterfly
                 prepareButterfly();
-                
                 function prepareButterfly() {
                     butterfly = new THREE.Object3D();
                     leftwing = new THREE.Object3D();
                     rightwing = new THREE.Object3D();
-                    
+
                     butterfly.add(leftwing)
                     rightwing.scale.x = -1
                     butterfly.add(rightwing)
                     scene.add(butterfly)
-
                     loadButterflyWing()
                 }
-
                 function loadButterflyWing() {
                     var loader = new THREE.OBJLoader();
-                    loader.load( 'assets/butterfly.obj', function (object){
-                                object.material = new THREE.MeshStandardMaterial({color: 0x0055ff});
-                                object.position.y = 0;
-                                object.position.x = 0;
-                                object.position.z = 0;
-                                object.scale.multiplyScalar( 0.02 );
+                    loader.load( 'assets/obj/butterfly.obj', function (object){
+                        object.material = new THREE.MeshStandardMaterial({color: 0x0055ff});
+                        object.position.y = 0;
+                        object.position.x = 0;
+                        object.position.z = 0;
+                        object.scale.multiplyScalar( 0.02 );
 
-                                leftwing.add(object);
-                                var clone = object.clone();
-                                rightwing.add(clone);
-                            }
-                        );
+                        leftwing.add(object);
+                        var clone = object.clone();
+                        rightwing.add(clone);
+                    });
                 }
+                //load Json
+
+                  var messages
+
+                  var loader = new THREE.XHRLoader()
+                  loader.load('assets/data/sample_data.json', function(text){
+                    messages = JSON.parse(text);
+
+                    group = new THREE.Object3D();
+
+                    for (var i = 0; i< sample_data.length; i++){
+                           var time = new Date(messages[i].timestamp).getTime();
+                           var t1 = (time/10000)-137705670;
+                           var t2 = map_range(t1, 0, 9425592, 0, 1000);
+                           mesh(0,0,t2,0.1);
+                       }
 
 
 
+                  })
+                  function map_range(value, low1, high1, low2, high2) {
+                      return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+                  }
 
-                    //load Json
+                function mesh(x,y,z,scale){
+                  this.x = x;
+                  this.y = y;
+                  this.z = z;
+                  this.scale = scale;
+                  var material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true } );
+                  var geometry = new THREE.SphereGeometry( 1, 4, 4 );
+                  group = new THREE.Object3D();
 
-                    var request = new XMLHttpRequest();
-                    request.open('GET', 'assets/sorted_data.json', true);
-
-                    request.onload = function() {
-                      if (request.status >= 200 && request.status < 400) {
-                        // Success!
-                        //console.log(request.responseText);
-                        
-                        var messages = JSON.parse(request.responseText);
-                        var group = makeGroup()
-                         for (var i = 0; i< messages.length; i++){
-                                var time = new Date(messages[i].timestamp).getTime();
-                                var newTime1 = (time/10000)-137705670;
-
-                                function map_range(value, low1, high1, low2, high2) {
-                                    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-                                }
-                                var newTime2 = map_range(newTime1, 0, 9425592, 0, 1000);
-                                console.log(newTime2);
-                                addObject(z, group);
-                       
-
-                        }
-                      } else {
-                        // We reached our target server, but it returned an error
-                      }
-                    };
-
-                    request.onerror = function() {
-                      // There was a connection error of some sort
-                    };
-
-                    request.send();
-                   
-
-
-
-                function makeObject(z, group){
-
-                    var points = [
-                        new THREE.Vector3( -0.04, -0.03, -0.09 ),
-                        new THREE.Vector3( 0.03, 0.03, 0.09 ),
-                        new THREE.Vector3( -0.027, 0.05, -0.06 ),
-                        new THREE.Vector3( 0.1, 0.06, -0.07 ),
-                        new THREE.Vector3( 0.09, -0.08, 0.08 ),
-                        new THREE.Vector3( 0.04, -0.04, 0.02 ),
-                        new THREE.Vector3( -0.02, -0.06, 0.02 ),
-                        new THREE.Vector3( -0.05, 0.006, 0.06 ),
-                        new THREE.Vector3( 0.01, -0.025, -0.04 ),
-                    ];
-
-                    var material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true } );
-                    var geometry = new THREE.ConvexGeometry(points);
                     var mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(x, y, z);
+                    mesh.scale.x = scale
+                    mesh.scale.y = scale
+                    mesh.scale.z = scale
+                    console.log('yes');
+                    group.add(mesh);
 
-                    var group = new THREE.Object3D();                   
-                        
-                       
+                  // var geom = new THREE.Geometry()
+                  // for (var i = 0; i < group.children.length; i++) {
+                  //     group.children[i].updateMatrix();
+                  //     geom.merge(group.children[i].geometry, group.children[i].matrix);
+                  // }
+                  //
+                  // group = new THREE.Mesh(geom, material);
+                  scene.add(group)
+                  //scene.add(mesh);
 
-                       mesh.position.set(0, 0, newTime2);
-
-ÅÅ
-                    
-
-
-                    
-                //     for (var _x = -amo; _x <= amo; _x++) {
-                //         for (var _y = -amo; _y <= amo; _y++) {
-                //             for (var _z = -amo; _z <= amo; _z++) {
-                //                 mesh = new THREE.Mesh(geometry,material);
-                //                 mesh.position.set(_x, _y, _z);
-                //                 group.add(mesh);
-                //             }
-                //         }
-                //     }
-
-                    var geom = new THREE.Geometry()
-                    
-                    for (var i = 0; i < group.children.length; i++) {
-                        group.children[i].updateMatrix();
-                        geom.merge(group.children[i].geometry, group.children[i].matrix);
-                    }
-                    group = new THREE.Mesh(geom, material);
-                //scene.add(group);
-
-
+                  }
 
                 }
-
-                makeObject()
 
 
                 // light
@@ -208,7 +154,7 @@
                 window.addEventListener('deviceorientation', setOrientationControls, true);
                 window.addEventListener('resize', onWindowResize, false);
 
-            }
+
 
             function animate() {
 
