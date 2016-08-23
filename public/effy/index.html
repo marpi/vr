@@ -94,10 +94,11 @@
                   var loader = new THREE.XHRLoader()
                   loader.load('assets/data/sample_data.json', function(text){
                     messages = JSON.parse(text);
+                    //var sample_data = messages;
 
                     group = new THREE.Object3D();
 
-                    for (var i = 0; i< sample_data.length; i++){
+                    for (var i = 0; i< 100; i++){
                            var time = new Date(messages[i].timestamp).getTime();
                            var t1 = (time/10000)-137705670;
                            var t2 = map_range(t1, 0, 9425592, 0, 1000);

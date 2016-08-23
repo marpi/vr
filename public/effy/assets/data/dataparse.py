@@ -35,10 +35,18 @@ def getKey(message):
 sorted_messages = sorted(all_messages, key = getKey)
 
 for message in sorted_messages:
-Å
-
 	del message['date']
+# sorted_data = json.dumps(sorted_messages)
+# f = open('sorted_data.json','w')
+# f.write(sorted_data)
 
-sorted_data = json.dumps(sorted_messages)
-f = open('sorted_data.json','w')
-f.write(sorted_data)
+
+
+for message in sorted_messages:
+	if sorted_messages.index(message) > 100:
+		del message
+
+
+sample_data = json.dumps(sorted_messages)
+f = open('sample_data.json','w')
+f.write(sample_data)
