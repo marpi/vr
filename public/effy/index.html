@@ -18,6 +18,16 @@
         <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
         <script src="js/third-party/threejs/loaders/OBJLoader.js"></script>
         <script src="js/utils/helpers.js"></script>
+
+        <script src="js/leapmotion/leap-0.6.4.min.js"></script>
+        <script src="js/leapmotion/LeapCameraControls.js"></script>
+        <script src="js/leapmotion/LeapObjectControls.js"></script>
+
+
+        </script>
+
+        //add music
+<!--
         <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
         <script>
         SC.initialize({
@@ -26,11 +36,11 @@
             SC.stream("/tracks/293").then(function(player){
                 player.play();
             });
-        </script>
+        </script> -->
 
         <script>
             var user = false;
-            var camera, scene, renderer, group;
+            var camera, scene, renderer, group, butterfly, objectControls;
             var effect;
 
             var mobile = false;
@@ -57,36 +67,79 @@
                 camera.lookAt(scene.position);
 
                 controls = new THREE.OrbitControls(camera);
-                controls.autoRotate = true;
+                controls.autoRotate = false;
                 controls.enablePan = false;
 
-                // add butterfly
+                // add leapmotion
+
+
+
+
                 prepareButterfly();
-                function prepareButterfly() {
-                    butterfly = new THREE.Object3D();
-                    leftwing = new THREE.Object3D();
-                    rightwing = new THREE.Object3D();
 
-                    butterfly.add(leftwing)
-                    rightwing.scale.x = -1
-                    butterfly.add(rightwing)
-                    scene.add(butterfly)
-                    loadButterflyWing()
-                }
-                function loadButterflyWing() {
-                    var loader = new THREE.OBJLoader();
-                    loader.load( 'assets/obj/butterfly.obj', function (object){
-                        object.material = new THREE.MeshStandardMaterial({color: 0x0055ff});
-                        object.position.y = 0;
-                        object.position.x = 0;
-                        object.position.z = 0;
-                        object.scale.multiplyScalar( 0.02 );
+                  function prepareButterfly() {
 
-                        leftwing.add(object);
-                        var clone = object.clone();
-                        rightwing.add(clone);
-                    });
+                   butterfly = new THREE.Object3D();
+                   leftwing = new THREE.Object3D();
+                   rightwing = new THREE.Object3D();
+
+                   butterfly.add(leftwing)
+                   rightwing.scale.x = -1
+                   butterfly.add(rightwing)
+
+                   butterfly.rotation.x = Math.PI/2
+                   butterfly.rotation.y = Math.PI
+                   butterfly.position.z = - 0.5
+
+
+                   scene.add(butterfly)
+                   //objects.push(object);
                 }
+
+                var loader = new THREE.OBJLoader();
+                loader.load(
+                  'assets/obj/butterfly.obj',
+                  function (object){
+                    object.traverse( function ( child ) {
+
+                        if ( child instanceof THREE.Mesh ) {
+                            child.material = new THREE.MeshBasicMaterial( { color: 0x0000ff, shading: THREE.FlatShading, wireframe: false, transparent: true } );
+                        }
+
+                    } );
+                    object.scale.set(0.02,0.02,0.02);
+                    leftwing.add(object);
+                    var clone = object.clone();
+                    rightwing.add(clone);
+                    //console.log(loader);
+                });
+
+                objectControl = new THREE.LeapObjectControls(camera, butterfly);
+
+                objectControl.rotateEnabled  = false;
+                objectControl.rotateSpeed    = 3;
+                objectControl.rotateHands    = 1;
+                objectControl.rotateFingers  = [2, 3];
+
+                objectControl.scaleEnabled   = false;
+                objectControl.scaleSpeed     = 3;
+                objectControl.scaleHands     = 1;
+                objectControl.scaleFingers   = [4, 5];
+
+                objectControl.panEnabled     = true;
+                objectControl.panSpeed       = 3;
+                objectControl.panHands       = 1;
+                objectControl.panFingers     = [1, 5];
+                objectControl.panRightHanded = false; // for left-handed person
+
+                //scene.add(objectControl);
+
+                 Leap.loop(function(frame){
+                   objectControl.update(frame);
+                   renderer.render(scene, camera);
+                   console.log('control works');
+                 })
+
                 //load Json
 
                   var messages
@@ -104,10 +157,8 @@
                            var t2 = map_range(t1, 0, 9425592, 0, 1000);
                            mesh(0,0,t2,0.1);
                        }
-
-
-
                   })
+
                   function map_range(value, low1, high1, low2, high2) {
                       return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
                   }
@@ -117,66 +168,44 @@
                   this.y = y;
                   this.z = z;
                   this.scale = scale;
-                  var material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true } );
+                  var material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true });
                   var geometry = new THREE.SphereGeometry( 1, 4, 4 );
                   group = new THREE.Object3D();
 
-                    var mesh = new THREE.Mesh(geometry, material);
-                    mesh.position.set(x, y, z);
-                    mesh.scale.x = scale
-                    mesh.scale.y = scale
-                    mesh.scale.z = scale
-                    console.log('yes');
-                    group.add(mesh);
-
-                  // var geom = new THREE.Geometry()
-                  // for (var i = 0; i < group.children.length; i++) {
-                  //     group.children[i].updateMatrix();
-                  //     geom.merge(group.children[i].geometry, group.children[i].matrix);
-                  // }
-                  //
-                  // group = new THREE.Mesh(geom, material);
+                  var mesh = new THREE.Mesh(geometry, material);
+                  mesh.position.set(x, y, z);
+                  mesh.scale.x = scale
+                  mesh.scale.y = scale
+                  mesh.scale.z = scale
+                  console.log('yes');
+                  group.add(mesh);
                   scene.add(group)
-                  //scene.add(mesh);
-
                   }
 
                 }
 
 
-                // light
 
+                // light
                 var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
-
                 // events
-
                 window.addEventListener('deviceorientation', setOrientationControls, true);
                 window.addEventListener('resize', onWindowResize, false);
 
-
-
             function animate() {
-
                 requestAnimationFrame(animate);
                 render();
-
             }
-
             function render() {
-
                 controls.update();
-
                 if (mobile) {
                     camera.position.set(0, 0, 0)
                     camera.translateZ(5);
                 }
                 renderer.render(scene, camera);
-
             }
-
         </script>
-
     </body>
 </html>
