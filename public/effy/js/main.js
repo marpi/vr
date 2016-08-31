@@ -38,7 +38,7 @@ var geometries = [
   new THREE.TetrahedronGeometry( 5, 0 ),
 ];
 
-function Mesh( ){
+function Mesh(){
   var material = new THREE.MeshLambertMaterial( {
     color: new THREE.Color( Math.random(), Math.random() * 0.5, Math.random() ),
     blending: THREE.AdditiveBlending,
@@ -136,7 +136,7 @@ function init() {
   var loader = new THREE.XHRLoader()
   loader.load('assets/data/sample_data.json', function(text){
     messages = JSON.parse(text);
-    //var sample_data = messages;
+    //var sample_data = messages; add comment
 
     var group = new THREE.Group();
     scene.add(group);
@@ -144,20 +144,34 @@ function init() {
     var mesh, INTERVAL = 100, timers = [];
     // memory management of object creation
     for (var i = 0; i< messages.length; i++){
-       var time = new Date(messages[i].timestamp).getTime();
-       var l = messages[i].content.length
-       var mappedL = l/100
 
-       var t1 = (time/10000)-137705670;
-       var mappedZ = map_range(t1, 0, 9425592, 0, 10000000);
-       var randomX = Math.random()*10 -5
-       var randomY = Math.random()*10 -5
-       var mesh = Mesh();
-       mesh.position.x = randomX;
-       mesh.position.y = randomY;
-       mesh.position.z = mappedZ;
-       mesh.scale.set(mappedL, mappedL, mappedL);
-       group.add(mesh);
+      (function(j, baseTime){
+        var INTERVAL = baseTime*(j+1);
+        setTimeout(function(){
+
+          var time = new Date(messages[j].timestamp).getTime();
+          var l = messages[j].content.length
+          var mappedL = l/100
+          var t1 = (time/10000)-137705670;
+          var mappedZ = map_range(t1, 0, 9425592, 0, 10000000);
+          var randomX = Math.random()*10 -5
+          var randomY = Math.random()*10 -5
+
+          var mesh = Mesh();
+          mesh.position.x = randomX;
+          mesh.position.y = randomY;
+          mesh.position.z = mappedZ;
+          mesh.scale.set(mappedL, mappedL, mappedL);
+          group.add(mesh);
+
+          if (group.children.length > 10) {
+            group.children.splice(0,1);
+          }
+
+        },INTERVAL)
+
+      })(i, 400);
+
 
      }
   });
