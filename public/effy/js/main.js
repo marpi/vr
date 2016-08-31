@@ -1,11 +1,11 @@
 var user = false;
-var camera, scene, renderer, group, butterfly, objectControls;
+var camera, scene, renderer, butterfly, objectControls;
 var effect;
 
 
 var mobile = false;
 var num = 2;
-
+groupInfo = {};
 init();
 
 animate();
@@ -32,37 +32,27 @@ function map_range(value, low1, high1, low2, high2) {
     return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
-function Mesh(x,y,z,scale){
-  this.x = x;
-  this.y = y;
-  this.z = z;
-  this.scale = scale;
+var geometries = [
+  new THREE.IcosahedronGeometry( 5, 0 ),
+  new THREE.OctahedronGeometry( 5, 0 ),
+  new THREE.TetrahedronGeometry( 5, 0 ),
+];
+
+function Mesh( ){
   var material = new THREE.MeshLambertMaterial( {
     color: new THREE.Color( Math.random(), Math.random() * 0.5, Math.random() ),
     blending: THREE.AdditiveBlending,
     depthTest: false,
-    // shading: THREE.FlatShading,
+    shading: THREE.FlatShading,
     transparent: true
   } );
 
-  var geometries = [
-    new THREE.IcosahedronGeometry( 5, 0 ),
-    new THREE.OctahedronGeometry( 5, 0 ),
-    new THREE.TetrahedronGeometry( 5, 0 ),
-  ];
-
   var geometry = geometries[ Math.floor( Math.random() * geometries.length ) ];
   var mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(x, y, z);
-  mesh.scale.set(scale,scale,scale);
-  // question about mesh scale: why is wireframe smaller than mesh
-
-  // var wireframe = mesh.clone();
-  // wireframe.material = wireframe.material.clone();
-  // wireframe.material.wireframe = true;
-  // mesh.add( wireframe );
-  // debugger
-
+  var wireframe = mesh.clone();
+  wireframe.material = wireframe.material.clone();
+  wireframe.material.wireframe = true;
+  mesh.add( wireframe );
   return mesh;
 }
 
@@ -148,7 +138,9 @@ function init() {
     messages = JSON.parse(text);
     //var sample_data = messages;
 
-    var group = new THREE.Object3D();
+    var group = new THREE.Group();
+    scene.add(group);
+
     var mesh, INTERVAL = 100, timers = [];
     // memory management of object creation
     for (var i = 0; i< messages.length; i++){
@@ -160,29 +152,14 @@ function init() {
        var mappedZ = map_range(t1, 0, 9425592, 0, 10000000);
        var randomX = Math.random()*10 -5
        var randomY = Math.random()*10 -5
-       mesh = new Mesh(randomX,randomY,mappedZ, mappedL);
-
-       INTERVAL *= (i+1);
-
-       setTimeout(function(){
-         console.log('about to add group to scene')
-         group.add(mesh);
-         scene.add(group);
-       }, INTERVAL);
+       var mesh = Mesh();
+       mesh.position.x = randomX;
+       mesh.position.y = randomY;
+       mesh.position.z = mappedZ;
+       mesh.scale.set(mappedL, mappedL, mappedL);
+       group.add(mesh);
 
      }
-
-    //  INTERVAL = messages.length * 100;
-    //  console.log('interval before', INTERVAL);
-    //  setTimeout(function(){
-    //    console.log('about to add group to scene')
-    //    //timers.forEach(function(timer){ clearTimeout(timer); });
-    //
-     //
-     //
-    //    console.log('interval', INTERVAL);
-    //  }, INTERVAL);
-
   });
 
 }
@@ -198,7 +175,7 @@ window.addEventListener('resize', onWindowResize, false);
 
 
 function animate() {
-  console.log('animating')
+  //console.log('animating')
     requestAnimationFrame(animate);
     render();
 }
