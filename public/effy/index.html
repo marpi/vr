@@ -13,31 +13,27 @@
     </head>
     <body>
         <script src="js/third-party/threejs/three.js"></script>
-        <script src="js/third-party/threejs/geometries/ConvexGeometry.js"></script>
         <script src="js/third-party/threejs/controls/DeviceOrientationControls.js"></script>
         <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
         <script src="js/third-party/threejs/loaders/OBJLoader.js"></script>
-        <script src="js/utils/helpers.js"></script>
+        <script src="js/third-party/threejs/materials/threex.atmospherematerial.js"></script>
+        <script src="js/third-party/threejs/materials/threex.atmospherematerialdatgui.js"></script>
+        <script src="js/third-party/threejs/materials/threex.dilategeometry.js"></script>
+        <script src="js/third-party/dat.gui.min.js"></script>
 
+        </script>
+        <script src="js/utils/helpers.js"></script>
         <script src="js/leapmotion/leap-0.6.4.min.js"></script>
         <script src="js/leapmotion/LeapCameraControls.js"></script>
         <script src="js/leapmotion/LeapObjectControls.js"></script>
 
+        <script src="js/third-party/beat.js"></script>
 
-        </script>
-
-        //add music
-<!--this doesn't matter
-        <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
-        <script>
-        SC.initialize({
-            client_id: '49ba2a48cbbc0c2d15c40a87941fd513'});
-            var track_url = 'http://soundcloud.com/forss/flickermood';
-            SC.stream("/tracks/293").then(function(player){
-                player.play();
-            });
-        </script> -->
+        <div id="info">
+          <button onClick="start()">start</button>
+        </div>
 
         <script src="js/main.js"></script>
+
     </body>
 </html>

@@ -1,37 +1,132 @@
+var infoDiv = document.getElementById('info');
 var user = false;
-var camera, scene, renderer, butterfly, objectControls;
+var camera, scene, renderer, butterfly, objectControls, box;
+var group;
+var audio, beat;
+var prevTime = performance.now();
 var effect;
-
-
 var mobile = false;
 var num = 2;
-groupInfo = {};
 init();
+// animate();
 
-animate();
+function init() {
+  // setup
+  audio = document.createElement( 'audio' );
+	audio.src = 'assets/datassette - Offal (1999-2014) - 87 Dataworld (2004).ogg';
+  //renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer = new THREE.WebGLRenderer( { preserveDrawingBuffer: true } );
+  renderer.autoClear = true;
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
 
-function prepareButterfly() {
+  scene = new THREE.Scene();
 
- butterfly = new THREE.Object3D();
- leftwing = new THREE.Object3D();
- rightwing = new THREE.Object3D();
+  camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 1000 );
+  camera.position.set(0, 0, 5);
+  camera.rotation.set( 0, 0, 0 );
+  camera.focalLength = camera.position.distanceTo(scene.position);
+  camera.lookAt(scene.position);
 
- butterfly.add(leftwing)
- rightwing.scale.x = -1
- butterfly.add(rightwing)
+  controls = new THREE.OrbitControls(camera);
+  controls.autoRotate = false;
+  controls.enablePan = true;
 
- butterfly.rotation.x = Math.PI/2
- butterfly.rotation.y = Math.PI
- butterfly.position.z = - 0.5
+  prepareButterfly();
 
- scene.add(butterfly)
- //objects.push(object);
+  var loader = new THREE.OBJLoader();
+  loader.load(
+    'assets/obj/butterfly_new.obj',
+    function (object){
+      object.traverse( function ( child ) {
+          if ( child instanceof THREE.Mesh ) {
+            var material = new THREE.MeshLambertMaterial( {
+              color: new THREE.Color( Math.random() * 0.2, Math.random() * 0.2,125),
+              blending: THREE.AdditiveBlending,
+              depthTest: false,
+              side:THREE.DoubleSide,
+              transparent: false
+            } );
+            child.material = material
+          }
+      });
+      object.scale.set(0.02,0.02,0.02);
+      object.rotation.z = Math.PI/6
+      leftwing.add(object);
+      var clone = object.clone();
+      rightwing.add(clone);
+  });
+
+  function prepareButterfly() {
+
+   butterfly = new THREE.Object3D();
+   leftwing = new THREE.Object3D();
+   rightwing = new THREE.Object3D();
+
+   butterfly.add(leftwing)
+   rightwing.scale.x = -1;
+   butterfly.add(rightwing)
+  scene.add(butterfly)
+  }
+
+  //leap motion
+  objectControl = new THREE.LeapObjectControls(camera, box);
+    objectControl.rotateEnabled  = true;
+    objectControl.rotateSpeed    = 3;
+    objectControl.rotateHands    = 1;
+    objectControl.rotateFingers  = [2, 3];
+
+    objectControl.scaleEnabled   = false;
+    objectControl.scaleSpeed     = 3;
+    objectControl.scaleHands     = 1;
+    objectControl.scaleFingers   = [4, 5];
+
+    objectControl.panEnabled     = true;
+    objectControl.panSpeed       = 3;
+    objectControl.panHands       = 1;
+    objectControl.panFingers     = [1, 5];
+    objectControl.panRightHanded = false;
+
+  Leap.loop(function(frame){
+   objectControl.update(frame);
+   renderer.render(scene, camera);
+   console.log('control works');
+  })
+
+
+  //load Json
+  var messages
+  group = new THREE.Group();
+  scene.add(group);
+
+  var loader = new THREE.XHRLoader()
+  loader.load('assets/data/sample_data.json', function(text){
+    messages = JSON.parse(text);
+    for (var i = 0; i<messages.length; i++){
+          var time = new Date(messages[i].timestamp).getTime();
+          var l = messages[i].content.length
+          var mappedL = l/100
+          var t1 = (time/10000)-137705670;
+          var mappedZ = map_range(t1, 0, 9425592, -5, -1000);
+          var randomX = Math.random()*10 -5
+          var randomY = Math.random()*10 -5
+          var mesh = Mesh();
+
+          mesh.position.x = randomX;
+          mesh.position.y = randomY;
+          mesh.position.z = mappedZ;
+          mesh.scale.set(mappedL, mappedL, mappedL);
+          group.add(mesh);
+    }
+  });
 }
 
 function map_range(value, low1, high1, low2, high2) {
     return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
+//Mesh function
 var geometries = [
   new THREE.IcosahedronGeometry( 5, 0 ),
   new THREE.OctahedronGeometry( 5, 0 ),
@@ -43,7 +138,6 @@ function Mesh(){
     color: new THREE.Color( Math.random(), Math.random() * 0.5, Math.random() ),
     blending: THREE.AdditiveBlending,
     depthTest: false,
-    shading: THREE.FlatShading,
     transparent: true
   } );
 
@@ -56,126 +150,17 @@ function Mesh(){
   return mesh;
 }
 
-function init() {
-
-  // setup
-
-  renderer = new THREE.WebGLRenderer({antialias: true});
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-
-  scene = new THREE.Scene();
-
-  camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 0, 3);
+function start(){
+  infoDiv.style.display = 'none';
+  camera.position.set( 0, 0, 1 );
   camera.rotation.set( 0, 0, 0 );
-  // camera z-position should change
-  // z-position should sync w music
-  camera.focalLength = camera.position.distanceTo(scene.position);
-  camera.lookAt(scene.position);
+  //audio.play();
+  animate(performance.now() );
 
-  controls = new THREE.OrbitControls(camera);
-  controls.autoRotate = false;
-  controls.enablePan = true;
+}
 
-  // add leapmotion
-
-  prepareButterfly();
-
-  var loader = new THREE.OBJLoader();
-  loader.load(
-    'assets/obj/butterfly.obj',
-    function (object){
-      object.traverse( function ( child ) {
-
-          if ( child instanceof THREE.Mesh ) {
-              child.material = new THREE.MeshBasicMaterial( { color: 0x0000ff, shading: THREE.FlatShading, wireframe: false, transparent: true } );
-          }
-
-      } );
-      object.scale.set(0.02,0.02,0.02);
-      leftwing.add(object);
-      var clone = object.clone();
-      rightwing.add(clone);
-      //console.log(loader);
-  });
-
-  objectControl = new THREE.LeapObjectControls(camera, butterfly);
-
-  objectControl.rotateEnabled  = false;
-  objectControl.rotateSpeed    = 3;
-  objectControl.rotateHands    = 1;
-  objectControl.rotateFingers  = [2, 3];
-
-  objectControl.scaleEnabled   = false;
-  objectControl.scaleSpeed     = 3;
-  objectControl.scaleHands     = 1;
-  objectControl.scaleFingers   = [4, 5];
-
-  objectControl.panEnabled     = true;
-  objectControl.panSpeed       = 3;
-  objectControl.panHands       = 1;
-  objectControl.panFingers     = [1, 5];
-  objectControl.panRightHanded = false; // for left-handed person
-
-  //scene.add(objectControl);
-
-  Leap.loop(function(frame){
-   objectControl.update(frame);
-   renderer.render(scene, camera);
-   console.log('control works');
-  })
-
-  //center object
-
-  //load Json
-
-  var messages
-
-  var loader = new THREE.XHRLoader()
-  loader.load('assets/data/sample_data.json', function(text){
-    messages = JSON.parse(text);
-    //var sample_data = messages; add comment
-
-    var group = new THREE.Group();
-    scene.add(group);
-
-    var mesh, INTERVAL = 100, timers = [];
-    // memory management of object creation
-    for (var i = 0; i< messages.length; i++){
-
-      (function(j, baseTime){
-        var INTERVAL = baseTime*(j+1);
-        setTimeout(function(){
-
-          var time = new Date(messages[j].timestamp).getTime();
-          var l = messages[j].content.length
-          var mappedL = l/100
-          var t1 = (time/10000)-137705670;
-          var mappedZ = map_range(t1, 0, 9425592, 0, 10000000);
-          var randomX = Math.random()*10 -5
-          var randomY = Math.random()*10 -5
-
-          var mesh = Mesh();
-          mesh.position.x = randomX;
-          mesh.position.y = randomY;
-          mesh.position.z = mappedZ;
-          mesh.scale.set(mappedL, mappedL, mappedL);
-          group.add(mesh);
-
-          if (group.children.length > 10) {
-            group.children.splice(0,1);
-          }
-
-        },INTERVAL)
-
-      })(i, 400);
-
-
-     }
-  });
-
+function stop() {
+  infoDiv.style.display = '';
 }
 
 // light
@@ -188,10 +173,30 @@ window.addEventListener('resize', onWindowResize, false);
 
 
 
-function animate() {
-  //console.log('animating')
-    requestAnimationFrame(animate);
-    render();
+function animate(time) {
+  if ( audio.duration > 0 && audio.currentTime === audio.duration ) {
+			stop();
+      console.log('audio.duration')
+			return;
+		}
+  //var delta = time - prevTime;
+  //camera.position.z = audio.currentTime;
+
+  for (var i = 0; i < group.children.length; i++) {
+						var child = group.children[ i ];
+            //
+						// child.rotation.x += 0.0005 * delta;
+						// child.rotation.y += 0.001 * delta;
+						child.position.z += 0.01;
+
+						// if ( child.position.z > 2000 ) {
+						// 	child.position.z -= 4000;
+            //
+						// }
+					}
+
+  render();
+  requestAnimationFrame(animate);
 }
 function render() {
     controls.update();
