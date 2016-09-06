@@ -1,6 +1,6 @@
 var infoDiv = document.getElementById('info');
 var user = false;
-var camera, scene, renderer, butterfly, objectControls, box;
+var camera, scene, renderer,leftwing, rightwing, butterfly, objectControls, box;
 var group;
 var audio, beat;
 var prevTime = performance.now();
@@ -66,7 +66,7 @@ function init() {
 
       object.scale.set(0.02,0.02,0.02);
       object.position.set(0,0,-1);
-      object.rotation.set(0,0,Math.PI/6);
+      object.rotation.set(0,0,-Math.PI/2);
 
       leftwing.add(object);
       var clone = object.clone();
@@ -79,9 +79,9 @@ function init() {
       delay: .2,
       repeat: -1,
       z:Math.PI/2
-    }
+    };
     TweenMax.to(leftwing.rotation,1, cofig);
-  }
+  };
 
   //leap motion
   objectControl = new THREE.LeapObjectControls(camera, box);
@@ -190,6 +190,8 @@ function animate(time) {
       console.log('audio.duration')
 			return;
 		}
+  fly();
+
   //var delta = time - prevTime;
   //camera.position.z = audio.currentTime;
   //
