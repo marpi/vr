@@ -35,39 +35,52 @@ function init() {
 
   prepareButterfly();
 
+  function prepareButterfly() {
+    butterfly = new THREE.Object3D();
+    leftwing = new THREE.Object3D();
+    rightwing = new THREE.Object3D();
+
+    butterfly.add(leftwing);
+    rightwing.scale.x = -1;
+    butterfly.add(rightwing);
+    scene.add(butterfly);
+  }
+  //load Butterfly Wing
   var loader = new THREE.OBJLoader();
   loader.load(
     'assets/obj/butterfly_new.obj',
     function (object){
-      object.traverse( function ( child ) {
+      object.traverse( function (child) {
           if ( child instanceof THREE.Mesh ) {
             var material = new THREE.MeshLambertMaterial( {
-              color: new THREE.Color( Math.random() * 0.2, Math.random() * 0.2,125),
+              color: new THREE.Color( Math.random() * 0.2, Math.random() * 0.2, 125),
               blending: THREE.AdditiveBlending,
               depthTest: false,
               side:THREE.DoubleSide,
-              transparent: false
+              wireframe: true,
+              transparent: true
             } );
             child.material = material
           }
       });
+
       object.scale.set(0.02,0.02,0.02);
-      object.rotation.z = Math.PI/6
+      object.position.set(0,0,-1);
+      object.rotation.set(0,0,Math.PI/6);
+
       leftwing.add(object);
       var clone = object.clone();
       rightwing.add(clone);
   });
 
-  function prepareButterfly() {
-
-   butterfly = new THREE.Object3D();
-   leftwing = new THREE.Object3D();
-   rightwing = new THREE.Object3D();
-
-   butterfly.add(leftwing)
-   rightwing.scale.x = -1;
-   butterfly.add(rightwing)
-  scene.add(butterfly)
+  function fly(){
+    config = {
+      ease: Elastic.easeOut,
+      delay: .2,
+      repeat: -1,
+      z:Math.PI/2
+    }
+    TweenMax.to(leftwing.rotation,1, cofig);
   }
 
   //leap motion
@@ -87,7 +100,6 @@ function init() {
     objectControl.panHands       = 1;
     objectControl.panFingers     = [1, 5];
     objectControl.panRightHanded = false;
-
   Leap.loop(function(frame){
    objectControl.update(frame);
    renderer.render(scene, camera);
@@ -112,7 +124,6 @@ function init() {
           var randomX = Math.random()*10 -5
           var randomY = Math.random()*10 -5
           var mesh = Mesh();
-
           mesh.position.x = randomX;
           mesh.position.y = randomY;
           mesh.position.z = mappedZ;
@@ -154,7 +165,7 @@ function start(){
   infoDiv.style.display = 'none';
   camera.position.set( 0, 0, 1 );
   camera.rotation.set( 0, 0, 0 );
-  //audio.play();
+  // audio.play();
   animate(performance.now() );
 
 }
@@ -181,22 +192,21 @@ function animate(time) {
 		}
   //var delta = time - prevTime;
   //camera.position.z = audio.currentTime;
-
-  for (var i = 0; i < group.children.length; i++) {
-						var child = group.children[ i ];
-            //
-						// child.rotation.x += 0.0005 * delta;
-						// child.rotation.y += 0.001 * delta;
-						child.position.z += 0.01;
-
-						// if ( child.position.z > 2000 ) {
-						// 	child.position.z -= 4000;
-            //
-						// }
-					}
+  //
+  // for (var i = 0; i < group.children.length; i++) {
+	// 					var child = group.children[ i ];
+  //           //
+	// 					// child.rotation.x += 0.0005 * delta;
+	// 					// child.rotation.y += 0.001 * delta;
+	// 					child.position.z += 0.01;
+  //
+	// 					// if ( child.position.z > 2000 ) {
+	// 					// 	child.position.z -= 4000;
+  //           //
+	// 					// }
+	// 				}
 
   render();
-  requestAnimationFrame(animate);
 }
 function render() {
     controls.update();
@@ -205,4 +215,5 @@ function render() {
         camera.translateZ(5);
     }
     renderer.render(scene, camera);
+    requestAnimationFrame(animate);
 }
