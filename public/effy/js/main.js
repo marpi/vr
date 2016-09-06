@@ -66,22 +66,29 @@ function init() {
 
       object.scale.set(0.02,0.02,0.02);
       object.position.set(0,0,-1);
-      object.rotation.set(0,0,-Math.PI/2);
-
+      object.rotation.set(0,0,- Math.PI/4);
       leftwing.add(object);
       var clone = object.clone();
       rightwing.add(clone);
+
+      TweenMax.to(leftwing.rotation,0.5,{
+        ease:Expo.easeInOut,
+        delay:0,
+        z:Math.PI/2,
+        repeat:-1,
+        yoyo:true
+      });
+
+      TweenMax.to(rightwing.rotation,0.5,{
+        ease:Expo.easeInOut,
+        delay:0,
+        z:-Math.PI/2,
+        repeat:-1,
+        yoyo:true
+      });
   });
 
-  function fly(){
-    config = {
-      ease: Elastic.easeOut,
-      delay: .2,
-      repeat: -1,
-      z:Math.PI/2
-    };
-    TweenMax.to(leftwing.rotation,1, cofig);
-  };
+
 
   //leap motion
   objectControl = new THREE.LeapObjectControls(camera, box);
@@ -190,7 +197,7 @@ function animate(time) {
       console.log('audio.duration')
 			return;
 		}
-  fly();
+
 
   //var delta = time - prevTime;
   //camera.position.z = audio.currentTime;
