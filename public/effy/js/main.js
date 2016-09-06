@@ -71,21 +71,13 @@ function init() {
       var clone = object.clone();
       rightwing.add(clone);
 
-      TweenMax.to(leftwing.rotation,0.5,{
-        ease:Expo.easeInOut,
-        delay:0,
-        z:Math.PI/2,
-        repeat:-1,
-        yoyo:true
-      });
+      var flapTime = 0.3;
+      var ease = Sine.easeInOut;
+      var delayTime = Math.random();
+      var degree = Math.PI*0.75;
 
-      TweenMax.to(rightwing.rotation,0.5,{
-        ease:Expo.easeInOut,
-        delay:0,
-        z:-Math.PI/2,
-        repeat:-1,
-        yoyo:true
-      });
+      TweenMax.to(leftwing.rotation, flapTime,{ease, delay:delayTime, z: degree, repeat:-1, yoyo:true });
+      TweenMax.to(rightwing.rotation,flapTime,{ease, delay:delayTime, z:- degree, repeat:-1, yoyo:true });
   });
 
 
