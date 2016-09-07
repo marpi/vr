@@ -3,7 +3,7 @@ var user = false;
 var camera, scene, renderer, leftwing, rightwing, butterfly, objectControls, box;
 var meshes = [];
 var audio, beat;
-var prevTime = performance.now();
+var prevTime;
 var effect;
 var mobile = false;
 var num = 2;
@@ -175,7 +175,8 @@ function start() {
     camera.position.set(0, 0, 1);
     camera.rotation.set(0, 0, 0);
     audio.play();
-    animate(performance.now());
+    prevTime = performance.now();
+    animate(prevTime);
 }
 
 function stop() {
@@ -198,17 +199,17 @@ function animate(time) {
         console.log('audio.duration')
         return;
     }
+
     var delta = time - prevTime;
 
-    var i, mesh;
     for (i = meshes.length - 1; i >= 0; i--) {
       mesh = meshes[i];
 
-      if ((i * 457) < time) {
+      if ((i * 457) < delta) {
         scene.add(mesh);
       }
 
-      if (((i * 457) + 4000) < time) {
+      if (((i * 457) + 100000) < delta) {
         scene.remove(mesh);
       }
 
