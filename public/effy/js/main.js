@@ -1,19 +1,24 @@
 var infoDiv = document.getElementById('info');
 var user = false;
 var camera, scene, renderer, leftwing, rightwing, butterfly, objectControls, box;
-var group;
+var meshes = [];
 var audio, beat;
 var prevTime = performance.now();
 var effect;
 var mobile = false;
 var num = 2;
+var beatLength = 0.46875;
 init();
 // animate();
 
 function init() {
     // setup
     audio = document.createElement('audio');
-    audio.src = 'assets/datassette - Offal (1999-2014) - 87 Dataworld (2004).ogg';
+    audio.src = 'assets/makeawish.mp3';
+
+    beat = new Beat(audio);
+    beat.length = beatLength;
+
     //renderer = new THREE.WebGLRenderer({antialias: true});
     renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true});
     renderer.autoClear = true;
@@ -105,36 +110,8 @@ function init() {
         console.log('control works');
     })
 
-
-    //load Json
-    var messages
-    group = new THREE.Group();
-    scene.add(group);
-
-    var loader = new THREE.XHRLoader()
-    loader.load('assets/data/sample_data.json', function (text) {
-        messages = JSON.parse(text);
-        for (var i = 0; i < messages.length; i++) {
-            var time = new Date(messages[i].timestamp).getTime();
-            var l = messages[i].content.length
-            var mappedL = l / 100
-            var t1 = (time / 10000) - 137705670;
-            var mappedZ = map_range(t1, 0, 9425592, -5, -1000);
-            var randomX = Math.random() * 10 - 5
-            var randomY = Math.random() * 10 - 5
-            var mesh = Mesh();
-            mesh.position.x = randomX;
-            mesh.position.y = randomY;
-            mesh.position.z = mappedZ;
-            mesh.scale.set(mappedL, mappedL, mappedL);
-            group.add(mesh);
-        }
-    });
 }
 
-function map_range(value, low1, high1, low2, high2) {
-    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-}
 
 //Mesh function
 var geometries = [
@@ -159,14 +136,46 @@ function Mesh() {
     mesh.add(wireframe);
     return mesh;
 }
+//load Json
+var messages
+var loader = new THREE.XHRLoader()
+loader.load('assets/data/sample_data.json', function (text) {
+    messages = JSON.parse(text);
+    for (var i = 0; i < messages.length; i++) {
+        var time = new Date(messages[i].timestamp).getTime();
+        var l = messages[i].content.length
+        var mappedL = l / 100
+        var t1 = (time / 10000) - 137705670;
+        var mappedZ = map_range(t1, 0, 9425592, -5, -10000);
+        var randomX = Math.random() * 10 - 5
+        var randomY = Math.random() * 10 - 5
+        var mesh = Mesh();
+
+        mesh.position.x = randomX;
+        mesh.position.y = randomY;
+        mesh.position.z = mappedZ;
+
+        mesh.scale.set(mappedL, mappedL, mappedL);
+        meshes.push(mesh);
+    }
+});
+function map_range(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+}
+
+function animate(mesh) {
+  mesh.rotation.x += 0.0005;
+  mesh.rotation.y += 0.001;
+  mesh.position.z += 0.01;
+}
 
 function start() {
+  console.log('HRE!!!');
     infoDiv.style.display = 'none';
     camera.position.set(0, 0, 1);
     camera.rotation.set(0, 0, 0);
-    // audio.play();
+    audio.play();
     animate(performance.now());
-
 }
 
 function stop() {
@@ -189,28 +198,29 @@ function animate(time) {
         console.log('audio.duration')
         return;
     }
+    var delta = time - prevTime;
 
+    var i, mesh;
+    for (i = meshes.length - 1; i >= 0; i--) {
+      mesh = meshes[i];
 
-    //var delta = time - prevTime;
-    //camera.position.z = audio.currentTime;
-    //
-    // for (var i = 0; i < group.children.length; i++) {
-    // 					var child = group.children[ i ];
-    //           //
-    // 					// child.rotation.x += 0.0005 * delta;
-    // 					// child.rotation.y += 0.001 * delta;
-    // 					child.position.z += 0.01;
-    //
-    // 					// if ( child.position.z > 2000 ) {
-    // 					// 	child.position.z -= 4000;
-    //           //
-    // 					// }
-    // 				}
+      if ((i * 457) < time) {
+        scene.add(mesh);
+      }
 
+      if (((i * 457) + 4000) < time) {
+        scene.remove(mesh);
+      }
+
+      mesh.rotation.x += 0.0005;
+      mesh.rotation.y += 0.001;
+      mesh.position.z += 0.01;
+    }
     render();
 }
 function render() {
     controls.update();
+
     if (mobile) {
         camera.position.set(0, 0, 0)
         camera.translateZ(5);
