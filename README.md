@@ -7,11 +7,11 @@
 Here's our shared repo.
 The main [index.html](index.html) is the file we were editing together, you can see it in action here:
 
-[https://vr.marpi.pl/](https://vr.marpi.pl/)
+[http://classes.marpi.pl/webvr](http://classes.marpi.pl/webvr)
 
-If you send me your GitHub account I'll add you to the collaborators, you'll have access to your personal repo [public/](public/) and you'll be able to test here: [https://vr.marpi.pl/public/](https://vr.marpi.pl/public/)
+If you send me your GitHub account I'll add you to the collaborators, you'll have access to your personal repo [public/](public/) and you'll be able to test here: [http://classes.marpi.pl/webvr/public/](http://classes.marpi.pl/webvr/public/)
 
-oh yeah, one more [thing](https://vr.marpi.pl/public/everyone) :)
+oh yeah, one more [thing](http://classes.marpi.pl/webvr/public/everyone) :)
 
 Thanks everyone for coming!
 
