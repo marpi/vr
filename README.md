@@ -16,3 +16,9 @@ oh yeah, one more [thing](http://classes.marpi.pl/webvr/public/everyone) :)
 Thanks everyone for coming!
 
 [http://marpi.pl/](http://marpi.pl/) + [http://grayareafestival.io/](http://grayareafestival.io/)
+
+Libraries
+-------
+
+[three.js](https://github.com/mrdoob/three.js/), [TweenMax.js](https://greensock.com/tweenmax), [isMobile](https://github.com/kaimallea/isMobile)
+
